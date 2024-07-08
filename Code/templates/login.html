@@ -1,0 +1,114 @@
+{%include "header.html" %}
+
+<!-- Page Header -->
+
+<main class="mb-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div v-if="!loggedIn">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item"><a class="page-link text-white bg-dark" href="#"
+                                :class="[login_page.login?'active':'']" @click="login_page.login = true">Login</a></li>
+                        <li class="page-item"><a class="page-link text-white bg-dark" href="#"
+                                :class="[login_page.login?'':'active']" @click="login_page.login = false">Register</a>
+                        </li>
+                    </ul>
+
+                    <form v-if="login_page.login">
+                        <div class="row my-4">
+                            <div class="col-3">
+                                <label class="form-label text-white fs-4">Username</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" v-model="login_page.login_details.username" />
+                            </div>
+                        </div>
+                        <div class="row my-4">
+                            <div class="col-3">
+                                <label class="form-label text-white fs-4">Password</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="password"
+                                    v-model="login_page.login_details.password" />
+                            </div>
+                        </div>
+                        <div class="row my-4">
+                            <button type="submit" class="btn btn-secondary fs-4" @click="loginHandler()">Login</button>
+                        </div>
+                    </form>
+
+                    <form v-else>
+
+                        <div class="row my-4">
+                            <div class="col-3">
+                                <label class="form-label text-white fs-4">First Name</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" />
+                            </div>
+                        </div>
+
+                        <div class="row my-4">
+                            <div class="col-3">
+                                <label class="form-label text-white fs-4">Last Name</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" />
+                            </div>
+                        </div>
+
+                        <div class="row my-4">
+                            <div class="col-3">
+                                <label class="form-label text-white fs-4">Email</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" />
+                            </div>
+                        </div>
+
+                        <div class="row my-4">
+                            <div class="col-3">
+                                <label class="form-label text-white fs-4">Username</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" />
+                            </div>
+                        </div>
+
+                        <div class="row my-4">
+                            <div class="col-3">
+                                <label class="form-label text-white fs-4">Password</label>
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="password" />
+                            </div>
+                        </div>
+
+                        <div class="row my-4">
+                            <div class="col-3">
+                                <label class="form-label text-white fs-4" for="user-type">Type</label>
+                            </div>
+                            <div class="col-9">
+                                <select class="form-select" id="user-type">
+                                    <option selected>Choose...</option>
+                                    <option value="1">Influencer</option>
+                                    <option value="2">Sponsor</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row my-4">
+                            <button type="submit" class="btn btn-secondary fs-4">Register</button>
+                        </div>
+                    </form>
+                </div>
+                <div v-else>
+                    <p class="text-white fs-1 text-center">You are already logged in!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include "footer.html" %}
