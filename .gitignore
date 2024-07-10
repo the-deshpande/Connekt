@@ -28,5 +28,7 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-venv/
+.venv/*
 .env
+instance/*
+*.db
