@@ -35,7 +35,7 @@ const store = createStore({
 		registerHandler({ commit }, register_details) {
 			const path = "http://127.0.0.1:5000/register";
 			axios.post(path, register_details).then((response) => {
-				commit("loginHanfler", response.data.access_token);
+				commit("loginHandler", response.data.access_token);
 			});
 		},
 

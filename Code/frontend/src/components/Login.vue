@@ -16,6 +16,18 @@ let registerDetails = reactive({
 	type: 0,
 });
 
+let influencerRegister = reactive({
+	platform: "",
+	reach: 0,
+	niche: "",
+});
+
+let sponsorRegister = reactive({
+	company: "",
+	industry: "",
+	budget: 0,
+});
+
 function registerHandler() {
 	if (
 		registerDetails.email == "" ||
@@ -28,12 +40,44 @@ function registerHandler() {
 		return;
 	}
 
-	store.dispatch("registerHandler", registerDetails);
+	if (
+		registerDetails.type == 1 &&
+		(influencerRegister.niche == "" ||
+			influencerRegister.platform == "" ||
+			influencerRegister.reach == 0)
+	) {
+		alert("Kindly fill all fields");
+		return;
+	}
+
+	if (
+		registerDetails.type == 2 &&
+		(sponsorRegister.industry == "" ||
+			sponsorRegister.company == "" ||
+			sponsorRegister.budget == 0)
+	) {
+		alert("Kindly fill all fields");
+		return;
+	}
+
+	if (registerDetails.type == 1) {
+		store.dispatch("registerHandler", [registerDetails, influencerRegister]);
+	} else {
+		store.dispatch("registerHandler", [registerDetails, sponsorRegister]);
+	}
 	registerDetails.email = "";
 	registerDetails.password = "";
 	registerDetails.first_name = "";
 	registerDetails.last_name = "";
 	registerDetails.type = 0;
+
+	influencerRegister.niche = "";
+	influencerRegister.platform = "";
+	influencerRegister.reach = 0;
+
+	sponsorRegister.industry = "";
+	sponsorRegister.company = "";
+	sponsorRegister.budget = 0;
 }
 
 function loginHandler() {
@@ -164,10 +208,111 @@ function loginHandler() {
 									class="form-select"
 									id="user-type"
 									v-model="registerDetails.type">
-									<!-- <option selected>Choose...</option> -->
 									<option value="1">Influencer</option>
 									<option value="2">Sponsor</option>
 								</select>
+							</div>
+						</div>
+
+						<div v-if="registerDetails.type == 1">
+							<div class="row my-4">
+								<div class="col-3">
+									<label class="form-label text-white fs-4" for="platform"
+										>Platform</label
+									>
+								</div>
+								<div class="col-9">
+									<select
+										class="form-select"
+										id="platform"
+										v-model="influencerRegister.platform">
+										<option>Instagram</option>
+										<option>Youtube</option>
+										<option>Tiktok</option>
+										<option>Twitter (X)</option>
+									</select>
+								</div>
+							</div>
+							<div class="row my-4">
+								<div class="col-3">
+									<label class="form-label text-white fs-4" for="niche"
+										>Niche</label
+									>
+								</div>
+								<div class="col-9">
+									<select
+										class="form-select"
+										id="niche"
+										v-model="influencerRegister.niche">
+										<option>Healthcare</option>
+										<option>Gaming</option>
+										<option>Tech</option>
+										<option>Vlog</option>
+									</select>
+								</div>
+							</div>
+							<div class="row my-4">
+								<div class="col-3">
+									<label class="form-label text-white fs-4" for="reach"
+										>Reach</label
+									>
+								</div>
+								<div class="col-9">
+									<input
+										class="form-select"
+										id="reach"
+										v-model="influencerRegister.reach"
+										type="number" />
+								</div>
+							</div>
+						</div>
+
+						<div v-if="registerDetails.type == 2">
+							<div class="row my-4">
+								<div class="col-3">
+									<label class="form-label text-white fs-4" for="company"
+										>Company</label
+									>
+								</div>
+								<div class="col-9">
+									<input
+										class="form-select"
+										id="company"
+										v-model="sponsorRegister.company"
+										type="text" />
+								</div>
+							</div>
+							<div class="row my-4">
+								<div class="col-3">
+									<label class="form-label text-white fs-4" for="industry"
+										>Industry</label
+									>
+								</div>
+								<div class="col-9">
+									<select
+										class="form-select"
+										id="industry"
+										v-model="sponsorRegister.industry">
+										<option>Healthcare</option>
+										<option>Gaming</option>
+										<option>Tech</option>
+										<option>Vlog</option>
+									</select>
+								</div>
+							</div>
+							<div class="row my-4">
+								<div class="col-3">
+									<label class="form-label text-white fs-4" for="budget"
+										>Budget</label
+									>
+								</div>
+								<div class="col-9">
+									<input
+										class="form-select"
+										id="budget"
+										v-model="sponsorRegister.budget"
+										type="number" />
+								</div>
 							</div>
 						</div>
 
