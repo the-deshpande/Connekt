@@ -32,3 +32,5 @@ coverage
 .env
 instance/*
 *.db
+__pychache__/*
+*.pyc
