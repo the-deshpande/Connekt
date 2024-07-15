@@ -4,7 +4,7 @@ from schema import db, User, Influencer, Campaign, Contract, Sponsor
 from dotenv import dotenv_values
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 env = dotenv_values()
 
@@ -34,16 +34,11 @@ with app.app_context():
         db.session.add(admin)
         db.session.commit()
 
-
-@app.route("/ping")
-def greeting():
-    return jsonify('pong')
-
 @app.route('/login', methods=['POST'])
 def login():
     user = db.session.execute(db.select(User).where(User.email == request.json['email'])).scalar()
     if user and check_password_hash(user.password, request.json['password']):
-        access_token = create_access_token(identity=request.json['email'], expires_delta=timedelta(days=1))
+        access_token = create_access_token(identity=request.json['email'], expires_delta=timedelta(days=30))
         return jsonify(access_token = access_token), 200
     else:
         return jsonify(message = "Incorrect ID or Password"), 401
@@ -52,7 +47,7 @@ def login():
 def register():
     user = db.session.execute(db.select(User).where(User.email == request.json[0]['email'])).scalar()
     if user:
-        return jsonify(message = 'User with this Email already exists!'), 401
+        return jsonify(message = 'User with this Email already exists!'), 409
     
     user = User(
         first_name = request.json[0]['first_name'],
@@ -63,9 +58,9 @@ def register():
     )
     db.session.add(user)
     db.session.commit()
-    user = db.session.execute(db.select(User).where(User.email == request.json[0]['email'])).scalar()
 
-    if request.json[0]['type'] == "2":
+    user = db.session.execute(db.select(User).where(User.email == request.json[0]['email'])).scalar()
+    if user.type == 2:
         sponsor = Sponsor(
             company=request.json[1]['company'],
             industry=request.json[1]['industry'],
@@ -74,7 +69,7 @@ def register():
         )
         db.session.add(sponsor)
         
-    elif request.json[0]['type'] == "1":
+    elif user.type == 1:
         influencer = Influencer(
             user_id = user.id,
             platform=request.json[1]['platform'],
@@ -85,39 +80,82 @@ def register():
         
     db.session.commit()
 
-    access_token = create_access_token(identity=user.email, expires_delta=timedelta(days=1))
-    return jsonify(access_token = access_token), 200
+    access_token = create_access_token(identity=user.email, expires_delta=timedelta(days=30))
+    return jsonify(access_token = access_token), 201
     
 @app.route('/get-user-data')
 @jwt_required()
 def get_user_data():
     user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
 
-    return jsonify({
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email,
-        'type': user.type,
-    }), 200
+    return jsonify(user.serialize), 200
 
 @app.route('/get-all-users')
 @jwt_required()
 def get_all_users():
     user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
-    if(user.type != 0):
-        return jsonify(message = "You do not have permissions for this"), 401
+    if user.type != 0:
+        return jsonify(message = "You do not have permissions to get all users"), 403
     
     all_users = db.session.execute(db.select(User)).scalars()
-    all_users_dict = []
-    for users in all_users:
-        all_users_dict.append({
-        'first_name': users.first_name,
-        'last_name': users.last_name,
-        'email': users.email,
-        'type': users.type,
-        })
-    return jsonify(all_users_dict), 200
+    return jsonify([user.serialize for user in all_users]), 200
 
+@app.route("/create-campaign", methods=['POST'])
+@jwt_required()
+def create_campaign():
+    user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
+    if user.type != 2:
+        return jsonify(message = "You do not have permissions to create a Campaign"), 403
+    
+    sponsor = db.session.execute(db.select(Sponsor).where(Sponsor.user_id == user.id)).scalar()
+    campaign = Campaign(
+        sponsor_id = sponsor.id,
+        name = request.json['name'],
+        description = request.json['desc'],
+        start_date = datetime.strptime(request.json['start'], '%d-%m-%Y').date(),
+        end_date = datetime.strptime(request.json['end'], '%d-%m-%Y').date(),
+        public = request.json['public'] == 'true',
+        goals = int(request.json['goals']),
+    )
+
+    db.session.add(campaign)
+    db.session.commit()
+
+    return jsonify(message = "The Campaign has been created!"), 201
+
+@app.route("/campaigns")
+@jwt_required()
+def get_all_campaigns():
+    user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
+    if user.type == 0:
+        campaigns = db.session.execute(db.select(Campaign)).scalars()
+        return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
+    
+    elif user.type == 1:
+        campaigns = db.session.execute(db.select(Campaign).where(Campaign.approved).where(Campaign.public == True)).scalars()
+        return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
+
+    else:
+        return jsonify(campaigns = [campaign.serialize for campaign in user.sponsor.campaign]), 200
+    
+@app.route("/pending-campaigns", methods=['GET', 'POST'])
+@jwt_required()
+def pending_campigns():
+    user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
+    if user.type != 0:
+        return jsonify(message = "You do not have the permissions to approve campaings"), 403
+    
+    if request.method == 'GET':
+        campaigns = db.session.execute(db.select(Campaign).where(Campaign.approved == False)).scalars()
+        return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
+    
+    campaign = db.session.execute(db.select(Campaign).where(Campaign.id == request.json['id'])).scalar()
+    campaign.approved = True
+    db.session.commit()
+    
+    return jsonify(message = "The campaign has been approved!"), 200
 
 if __name__ == '__main__':
+
     app.run(debug=True)
+    
