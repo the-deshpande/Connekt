@@ -100,61 +100,69 @@ def get_all_users():
     all_users = db.session.execute(db.select(User)).scalars()
     return jsonify([user.serialize for user in all_users]), 200
 
-@app.route("/create-campaign", methods=['POST'])
-@jwt_required()
-def create_campaign():
-    user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
-    if user.type != 2:
-        return jsonify(message = "You do not have permissions to create a Campaign"), 403
-    
-    sponsor = db.session.execute(db.select(Sponsor).where(Sponsor.user_id == user.id)).scalar()
-    campaign = Campaign(
-        sponsor_id = sponsor.id,
-        name = request.json['name'],
-        description = request.json['desc'],
-        start_date = datetime.strptime(request.json['start'], '%d-%m-%Y').date(),
-        end_date = datetime.strptime(request.json['end'], '%d-%m-%Y').date(),
-        public = request.json['public'] == 'true',
-        goals = int(request.json['goals']),
-    )
-
-    db.session.add(campaign)
-    db.session.commit()
-
-    return jsonify(message = "The Campaign has been created!"), 201
-
-@app.route("/campaigns")
+@app.route("/campaigns", methods=['GET', 'POST'])
 @jwt_required()
 def get_all_campaigns():
     user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
-    if user.type == 0:
-        campaigns = db.session.execute(db.select(Campaign)).scalars()
-        return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
+    if user.type == 0: # Admin
+        if request.method == 'GET': # Return all the Campaings
+            campaigns = db.session.execute(db.select(Campaign)).scalars()
+            return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
+        
+        # If campaign is approved changes the flagged status, else approves it
+        campaign = db.session.execute(db.select(Campaign).where(Campaign.id == request.json['id'])).scalar()
+        if campaign.approved:
+            campaign.flagged = not campaign.flagged
+            db.session.commit()
+            return jsonify(message = f"The campaign flag has been set to {campaign.flagged}!"), 200
+        else:
+            campaign.approved = True
+            db.session.commit()
+            return jsonify(message = "The campaign has been approved!"), 200
     
-    elif user.type == 1:
-        campaigns = db.session.execute(db.select(Campaign).where(Campaign.approved).where(Campaign.public == True)).scalars()
-        return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
+    elif user.type == 1: # Influencer
+        if request.method == 'GET': # Get the campaigns in the public and approved and not flagged
+            campaigns = db.session.execute(db.select(Campaign)
+                                           .where(Campaign.approved)
+                                           .where(Campaign.public)
+                                           .where(Campaign.flagged == False)
+                                           ).scalars()
+            return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
+        
+        campaign = db.session.execute(db.select(Campaign).where(Campaign.id == request.json['campaign_id'])).scalar()
+        contract = Contract(
+            influencer_id = user.influencer.id,
+            campaign_id = campaign.id,
+            requirements = request.json['requirements'],
+            payment_amount = request.json['payment_amount'],
+            status = 1 # made by influencer
+        )
+        db.session.add(contract)
+        db.session.commit()
 
-    else:
-        return jsonify(campaigns = [campaign.serialize for campaign in user.sponsor.campaign]), 200
-    
-@app.route("/pending-campaigns", methods=['GET', 'POST'])
-@jwt_required()
-def pending_campigns():
-    user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
-    if user.type != 0:
-        return jsonify(message = "You do not have the permissions to approve campaings"), 403
-    
-    if request.method == 'GET':
-        campaigns = db.session.execute(db.select(Campaign).where(Campaign.approved == False)).scalars()
-        return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
-    
-    campaign = db.session.execute(db.select(Campaign).where(Campaign.id == request.json['id'])).scalar()
-    campaign.approved = True
-    db.session.commit()
-    
-    return jsonify(message = "The campaign has been approved!"), 200
+        return jsonify(message = "The Ad request has been sent!"), 201
+        
+    else: # Sponsor
+        if request.method == 'GET': # Get all your campaings
+            return jsonify(campaigns = [campaign.serialize for campaign in user.sponsor.campaign]), 200
+        
+        # Create a new campaign
+        campaign = Campaign(
+            sponsor_id = user.sponsor.id,
+            name = request.json['name'],
+            description = request.json['desc'],
+            start_date = datetime.strptime(request.json['start'], '%d-%m-%Y').date(),
+            end_date = datetime.strptime(request.json['end'], '%d-%m-%Y').date(),
+            public = request.json['public'] == 'true',
+            goals = int(request.json['goals']),
+        )
 
+        db.session.add(campaign)
+        db.session.commit()
+
+        return jsonify(message = "The Campaign has been created!"), 201
+
+    
 if __name__ == '__main__':
 
     app.run(debug=True)
