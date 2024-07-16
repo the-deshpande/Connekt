@@ -162,6 +162,69 @@ def get_all_campaigns():
 
         return jsonify(message = "The Campaign has been created!"), 201
 
+@app.route("/contract", methods=['GET', 'POST', 'PUT'])
+@jwt_required()
+def contract():
+    user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
+    if user.type == 0: # Admin
+        if request.method == 'GET': # Get all current Contracts
+            contracts = db.session.execute(db.select(Contract)).scalars()
+            return jsonify(contracts = [contract.serialize for contract in contracts]), 200
+        
+        else:
+            return jsonify(message="Please don't make an Ad request"), 401
+    
+    elif user.type == 1: # Influencer
+        if request.method == 'GET': # Get all contracts that they have
+            contracts = db.session.execute(db.select(Contract)
+                                           .where(Contract.influencer_id == user.influencer.id)).scalars()
+            return jsonify(contracts = [contract.serialize for contract in contracts]), 200
+        
+        elif request.method == 'PUT': # Approve or reject a pending contract
+            contract = db.session.execute(db.select(Contract)
+                                          .where(Contract.id == request.json['contract_id'])).scalar()
+            
+            if contract.status != 2:
+                return jsonify(message = "The status doesn't seem to need your approval!"), 401
+
+            contract.status = 3 if request.json['approved'] == True else 0
+            db.session.commit()
+            return jsonify(message="The contract action has been completed!"), 200
+        
+        else:
+            return jsonify(message="You don't have any use of this api"), 403
+    
+    else: # Sponsor
+        if request.method == "GET": # Get all contracts of the sponsor
+            contracts = db.session.execute(db.select(Contract)
+                                           .where(Contract.campaign.has(sponsor_id=user.sponsor.id))).scalars()
+            return jsonify(contracts = [contract.serialize for contract in contracts]), 200
+        
+        elif request.method == "POST": # Create a new Campaign
+            campaign = db.session.execute(db.select(Campaign)
+                                          .where(Campaign.id == request.json['campaign_id'])).scalar()
+            influencer = db.session.execute(db.select(Influencer)
+                                            .where(Influencer.id == request.json['influencer_id'])).scalar()
+            contract = Contract(
+                influencer_id = influencer.id,
+                campaign_id = campaign.id,
+                requirements = request.json['requirements'],
+                payment_amount = request.json['payment_amount'],
+                status = 2 # made by sponsor
+            )
+            db.session.add(contract)
+            db.session.commit()
+            return jsonify(message="The Ad request has been sent!"), 201
+        
+        else: # Approve or reject the Contract
+            contract = db.session.execute(db.select(Contract)
+                                          .where(Contract.id == request.json['contract_id'])).scalar()
+            if contract.status != 1:
+                return jsonify(message = "The status doesn't seem to need your approval!"), 401
+            
+            contract.status = 3 if request.json['approved'] == True else 0
+            db.session.commit()
+            return jsonify(message="The contract action has been completed!"), 200
     
 if __name__ == '__main__':
 
