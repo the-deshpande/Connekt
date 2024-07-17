@@ -5,7 +5,7 @@ const store = createStore({
 	state() {
 		return {
 			accessToken: localStorage.getItem("accessToken"),
-			user: {},
+			user: JSON.parse(localStorage.getItem("userDetails")),
 		};
 	},
 	mutations: {
@@ -22,26 +22,39 @@ const store = createStore({
 
 		getUserData(state, user) {
 			state.user = user;
+			localStorage.setItem("userDetails", JSON.stringify(user));
 		},
 	},
 	actions: {
 		loginHandler({ commit }, login_details) {
 			const path = "http://127.0.0.1:5000/login";
-			axios.post(path, login_details).then((response) => {
-				commit("loginHandler", response.data.access_token);
-			});
+			return axios
+				.post(path, login_details)
+				.then((response) => {
+					commit("loginHandler", response.data.access_token);
+					return response.response.status;
+				})
+				.catch((response) => {
+					return response.response.status;
+				});
 		},
 
 		registerHandler({ commit }, register_details) {
 			const path = "http://127.0.0.1:5000/register";
-			axios.post(path, register_details).then((response) => {
-				commit("loginHandler", response.data.access_token);
-			});
+			return axios
+				.post(path, register_details)
+				.then((response) => {
+					commit("loginHandler", response.data.access_token);
+				})
+				.catch((response) => {
+					alert(response.response.data.message);
+				});
 		},
 
 		getUserData({ commit }, access_token) {
+			if (access_token == null) return "Not Logged In!";
 			const path = "http://127.0.0.1:5000/get-user-data";
-			axios
+			return axios
 				.get(path, {
 					headers: {
 						Authorization: `Bearer ${access_token}`,
@@ -49,12 +62,19 @@ const store = createStore({
 				})
 				.then((response) => {
 					commit("getUserData", response.data);
+					return "Successfully Received the Data!";
+				})
+				.catch((response) => {
+					return `Received the following error: ${response.response.data}`;
 				});
 		},
 	},
 	getters: {
 		isLoggedIn(state) {
 			return state.accessToken ? true : false;
+		},
+		userData(state) {
+			return state.user;
 		},
 	},
 });

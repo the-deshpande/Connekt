@@ -1,6 +1,6 @@
 <script setup>
+import { reactive } from "vue";
 import router from "@/router";
-import { onMounted, reactive, computed, onUpdated } from "vue";
 import store from "@/store";
 
 let login = true;
@@ -80,15 +80,29 @@ function registerHandler() {
 	sponsorRegister.budget = 0;
 }
 
-function loginHandler() {
+async function loginHandler() {
 	if (loginDetails.email == "" || loginDetails.password == "") {
 		alert("Kindly fill all fields");
 		return;
 	}
-	store.dispatch("loginHandler", loginDetails);
+	const status = await store.dispatch("loginHandler", loginDetails);
+	console.log(status);
+
 	loginDetails.email = "";
 	loginDetails.password = "";
+
+	if (status == 200) {
+		router.push("/");
+	} else if (status == 401) {
+		alert("Incorrect ID or Password");
+	} else {
+		alert(`Something went wrong! ${status}`);
+	}
 }
+
+// onBeforeUpdate(() => {
+// 	if (store.getters.isLoggedIn) router.push("/");
+// });
 </script>
 <template>
 	<main class="mb-4 container">
@@ -326,7 +340,7 @@ function loginHandler() {
 					</form>
 				</div>
 				<div v-else>
-					<p class="text-white fs-1 text-center">You are already logged in!</p>
+					<p class="text-white fs-1 text-center">You are Good to Go!</p>
 				</div>
 			</div>
 		</div>

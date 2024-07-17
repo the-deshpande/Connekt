@@ -1,20 +1,12 @@
 <script setup>
-import { onMounted, computed } from "vue";
+import { onMounted } from "vue";
 import store from "@/store";
-import router from "@/router";
 
-function getData() {
-	if (store.getters.isLoggedIn) {
-		store.dispatch("getUserData", store.state.accessToken);
-	} else {
-		router.push("/login");
-	}
-}
-
-onMounted(() => {
-	getData();
+onMounted(async () => {
+	const abc = await store.dispatch("getUserData", store.state.accessToken);
+	console.log(abc);
 });
 </script>
 <template>
-	<div class="container text-white">Hi {{ store.state.user.first_name }}</div>
+	<div class="container text-white">Hi {{ store.getters.userData }}</div>
 </template>

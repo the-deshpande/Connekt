@@ -24,6 +24,4 @@ const router = createRouter({
 	],
 });
 
-// router.beforeEach(async (to) => {})
-
 export default router;
