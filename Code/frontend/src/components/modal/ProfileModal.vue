@@ -1,65 +1,65 @@
 <script setup>
 import store from "@/store";
-var user = defineProps(["user"]);
-user = user.user;
 </script>
 
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
 		<div class="inner">
-			<h2>User Details</h2>
 			<button class="close-btn" @click="$emit('closePopup')">
 				<i class="bi bi-x-lg"></i>
 			</button>
+
 			<div class="row">
 				<div>
 					<span class="fw-bold">Name:</span>
-					{{ user.first_name }} {{ user.last_name }}
+					{{ store.state.user.first_name }} {{ store.state.user.last_name }}
 				</div>
-				<div><span class="fw-bold">Email:</span> {{ user.email }}</div>
-				<div v-if="user.influencer">
+				<div>
+					<span class="fw-bold">Email:</span> {{ store.state.user.email }}
+				</div>
+				<div v-if="store.state.user.influencer">
 					<div>
 						<span class="fw-bold">Type:</span>
 						Influencer
 					</div>
 					<div>
 						<span class="fw-bold">Niche:</span>
-						{{ user.influencer.niche }}
+						{{ store.state.user.influencer.niche }}
 					</div>
 					<div>
 						<span class="fw-bold">Platform:</span>
-						{{ user.influencer.platform }}
+						{{ store.state.user.influencer.platform }}
 					</div>
 					<div>
 						<span class="fw-bold">Reach:</span>
-						{{ user.influencer.reach }}
+						{{ store.state.user.influencer.reach }}
 					</div>
 				</div>
-				<div v-else-if="user.sponsor">
+				<div v-else-if="store.state.user.sponsor">
 					<div>
 						<span class="fw-bold">Type:</span>
 						Sponsor
 					</div>
 					<div>
 						<span class="fw-bold">Company:</span>
-						{{ user.sponsor.company }}
+						{{ store.state.user.sponsor.company }}
 					</div>
 					<div>
 						<span class="fw-bold">Industry:</span>
-						{{ user.sponsor.industry }}
+						{{ store.state.user.sponsor.industry }}
 					</div>
 					<div>
 						<span class="fw-bold">Budget:</span>
-						{{ user.sponsor.budget }}
+						{{ store.state.user.sponsor.budget }}
 					</div>
 				</div>
 			</div>
-
-			<div class="row" v-if="store.state.user.type == 0">
+			<div class="row">
+				<button class="btn col" @click="store.commit('logout')">
+					<i class="bi bi-box-arrow-left text-success"></i>
+				</button>
 				<button class="btn col">
-					<i
-						class="bi bi-flag-fill"
-						:class="{ 'text-danger': user.flagged }"></i>
+					<i class="bi bi-pencil text-warning"></i>
 				</button>
 				<button class="btn col">
 					<i class="bi bi-trash text-danger"></i>

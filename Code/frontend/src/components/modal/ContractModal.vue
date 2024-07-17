@@ -47,25 +47,28 @@ contract = contract.contract;
 					<span class="fw-bold">Payment Amount: </span>
 					{{ contract.payment_amount }}
 				</div>
-				<!-- <div class="row">
+				<div class="row">
 					<button
 						class="btn col"
-						v-if="store.state.user.type == 0 && !campaign.approved">
-						<i
-							class="bi bi-check-lg"
-							:class="{ 'text-danger': campaign.flagged }"></i>
-					</button>
-					<button
-						class="btn col"
-						v-if="store.state.user.type == 0 && campaign.approved">
-						<i
-							class="bi bi-flag-fill"
-							:class="{ 'text-danger': campaign.flagged }"></i>
-					</button>
-					<button class="btn col">
+						v-if="
+							store.state.user.type == 0 ||
+							contract.influencer.id == store.state.user.id ||
+							contract.campaign.sponsor.id == store.state.user.id
+						">
 						<i class="bi bi-trash-fill text-danger"></i>
 					</button>
-				</div> -->
+					<button
+						class="btn col"
+						v-if="
+							store.state.user.type == 0 ||
+							(contract.influencer.id == store.state.user.id &&
+								contract.status == 2) ||
+							(contract.campaign.sponsor.id == store.state.user.id &&
+								contract.status == 1)
+						">
+						<i class="bi bi-pencil text-warning"></i>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -1,6 +1,10 @@
 <script setup>
 import { RouterLink } from "vue-router";
 import store from "@/store";
+import { ref } from "vue";
+import ModalWindow from "./modal/ProfileModal.vue";
+
+let modalActive = ref(false);
 </script>
 
 <template>
@@ -82,14 +86,16 @@ import store from "@/store";
 			</li>
 
 			<li class="nav-item mx-1 me-3" v-else>
-				<button
-					@click="store.commit('logout')"
-					class="nav-link text-white active">
-					Logout
+				<button @click="modalActive = true" class="nav-link text-white active">
+					Profile
 				</button>
 			</li>
 		</ul>
 	</header>
+
+	<ModalWindow
+		v-if="modalActive"
+		@closePopup="modalActive = false"></ModalWindow>
 </template>
 
 <style lang="scss" scoped>

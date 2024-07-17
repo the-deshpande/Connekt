@@ -53,11 +53,21 @@ campaign = campaign.campaign;
 					</button>
 					<button
 						class="btn col"
-						v-if="store.state.user.type == 0 && campaign.approved">
+						v-else-if="store.state.user.type == 0 && campaign.approved">
 						<i
 							class="bi bi-flag-fill"
 							:class="{ 'text-danger': campaign.flagged }"></i>
 					</button>
+
+					<button
+						class="btn col"
+						v-if="
+							store.state.user.type == 0 ||
+							campaign.sponsor.id == store.state.user.id
+						">
+						<i class="bi bi-pencil text-warning"></i>
+					</button>
+
 					<button class="btn col">
 						<i class="bi bi-trash-fill text-danger"></i>
 					</button>
