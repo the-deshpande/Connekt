@@ -26,7 +26,7 @@ const store = createStore({
 
 		getUserData(state, user) {
 			state.user = user;
-			localStorage.setItem("userDetails", JSON.stringify(user));
+			localStorage.setItem("user", JSON.stringify(user));
 		},
 	},
 	actions: {

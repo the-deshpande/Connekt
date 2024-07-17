@@ -113,15 +113,38 @@ def register():
     access_token = create_access_token(identity=user.email, expires_delta=timedelta(days=30))
     return jsonify(access_token = access_token, user = user.serialize), 201
     
-@app.route('/get-user-data')
+@app.route('/get-user-data', methods=['GET', 'PUT', 'DELETE'])
 @jwt_required()
 def get_user_data():
     """
     GET: Returns the current users data
+    PUT: Updates the current users data
+    DELETE: Deletes the current user
     """
     user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
+    if request.method == 'GET':
+        return jsonify(user.serialize), 200
+    
+    elif request.method == 'DELETE':
+        if user.type == 0:
+            return jsonify(message="Admin account cannot be deleted"), 401
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify(message="The user has been deleted successfully"), 200
+    
+    user.first_name = request.json['first_name']
+    user.last_name = request.json['last_name']
+    if user.sponsor:
+        user.sponsor.industry = request.json['sponsor']['industry']
+        user.sponsor.company = request.json['sponsor']['company']
+        user.sponsor.budget = request.json['sponsor']['budget']
+    if user.influencer:
+        user.influencer.platform = request.json['influencer']['platform']
+        user.influencer.niche = request.json['influencer']['niche']
+        user.influencer.reach = request.json['influencer']['reach']
+    db.session.commit()
+    return jsonify(message = "The user data has been updated"), 200
 
-    return jsonify(user.serialize), 200
 
 @app.route('/all-users', methods=['GET', 'POST'])
 @jwt_required()
