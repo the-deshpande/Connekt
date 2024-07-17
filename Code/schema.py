@@ -5,8 +5,12 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    influencer = db.relationship('Influencer', backref=db.backref('user', uselist=False), uselist=False) 
-    sponsor = db.relationship('Sponsor', backref=db.backref('user', uselist=False), uselist=False)
+    influencer = db.relationship('Influencer', 
+                                 backref=db.backref('user', cascade="all, delete", uselist=False), 
+                                 cascade="all, delete", uselist=False) 
+    sponsor = db.relationship('Sponsor', 
+                              backref=db.backref('user', cascade="all, delete", uselist=False), 
+                              cascade="all, delete", uselist=False)
     first_name = db.Column(db.String(250), nullable=False)
     last_name = db.Column(db.String(250), nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
@@ -67,7 +71,9 @@ class Campaign(db.Model):
     __tablename__ = 'campaigns'
     id = db.Column(db.Integer, primary_key=True)
     sponsor_id = db.Column(db.Integer, db.ForeignKey('sponsors.id'), nullable=False)
-    sponsor = db.relationship('Sponsor', backref=db.backref('campaigns', uselist=True), uselist=False)
+    sponsor = db.relationship('Sponsor', 
+                              backref=db.backref('campaigns', cascade="all, delete", uselist=True), 
+                              uselist=False)
     name = db.Column(db.String(250), nullable=False)
     description = db.Column(db.String(250), nullable=False)
     start_date = db.Column(db.DateTime, nullable=False)
@@ -97,9 +103,13 @@ class Contract(db.Model):
     __tablename__ = 'contracts'
     id = db.Column(db.Integer, primary_key=True)
     campaign_id = db.Column(db.Integer, db.ForeignKey('campaigns.id'), nullable=False)
-    campaign = db.relationship('Campaign', backref=db.backref('contracts', uselist=True), uselist=False)
+    campaign = db.relationship('Campaign', 
+                               backref=db.backref('contracts', cascade="all, delete", uselist=True), 
+                               uselist=False)
     influencer_id = db.Column(db.Integer, db.ForeignKey('influencers.id'), nullable=False)
-    influencer = db.relationship('Influencer', backref=db.backref('contract', uselist=True), uselist=False)
+    influencer = db.relationship('Influencer', 
+                                 backref=db.backref('contracts', cascade="all, delete", uselist=True), 
+                                 uselist=False)
     requirements = db.Column(db.String(250), nullable=False)
     payment_amount = db.Column(db.Integer, nullable=False)
     status = db.Column(db.Integer, default=0) # 0 = rejected | 1 = influencer | 2 = sponsor | 3 = approved
