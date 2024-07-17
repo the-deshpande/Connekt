@@ -72,6 +72,11 @@ campaign = campaign.campaign;
 						<i class="bi bi-trash-fill text-danger"></i>
 					</button>
 				</div>
+				<div class="row" v-if="store.state.user.type == 2">
+					<div class="col"></div>
+					<button class="btn btn-green text-white col">Create Contract</button>
+					<div class="col"></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -122,6 +127,10 @@ campaign = campaign.campaign;
 
 		.user:hover {
 			color: darkcyan;
+		}
+
+		.btn-green {
+			background-color: #468585;
 		}
 	}
 }

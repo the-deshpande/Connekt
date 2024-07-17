@@ -1,7 +1,58 @@
 <script setup>
 import store from "@/store";
+import axios from "axios";
+import router from "@/router";
+import { ref } from "vue";
+
 var user = defineProps(["user"]);
-user = user.user;
+user = ref(user.user);
+
+async function flagUser(user_id) {
+	const path = "http://127.0.0.1:5000/all-users";
+	var response = await axios
+		.post(
+			path,
+			{ user_id: user_id },
+			{
+				headers: {
+					Authorization: `Bearer ${store.state.accessToken}`,
+				},
+			}
+		)
+		.then((response) => {
+			this.user.flagged = !this.user.flagged;
+			return response;
+		})
+		.catch((response) => {
+			alert(response.response.data.message);
+			return response.response;
+		});
+
+	console.log(response);
+}
+
+async function deleteUser(user_id) {
+	if (confirm("Are you sure?")) {
+		const path = "http://127.0.0.1:5000/all-users";
+		var response = await axios
+			.delete(path, {
+				headers: {
+					Authorization: `Bearer ${store.state.accessToken}`,
+				},
+				data: { user_id: user_id },
+			})
+			.then((response) => {
+				return response;
+			})
+			.catch((response) => {
+				return response.response;
+			});
+		console.log(response);
+		if (response.status == 200) {
+			router.go();
+		}
+	}
+}
 </script>
 
 <template>
@@ -56,14 +107,19 @@ user = user.user;
 			</div>
 
 			<div class="row" v-if="store.state.user.type == 0">
-				<button class="btn col">
+				<button class="btn col" @click="flagUser(user.id)">
 					<i
 						class="bi bi-flag-fill"
 						:class="{ 'text-danger': user.flagged }"></i>
 				</button>
-				<button class="btn col">
+				<button class="btn col" @click="deleteUser(user.id)">
 					<i class="bi bi-trash text-danger"></i>
 				</button>
+			</div>
+			<div class="row" v-if="store.state.user.type == 2">
+				<div class="col"></div>
+				<button class="btn btn-green text-white col">Create Contract</button>
+				<div class="col"></div>
 			</div>
 		</div>
 	</div>
@@ -106,6 +162,9 @@ user = user.user;
 			cursor: pointer;
 			background-color: var(--white-color);
 			border-width: 0;
+		}
+		.btn-green {
+			background-color: #468585;
 		}
 	}
 }

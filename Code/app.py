@@ -146,7 +146,7 @@ def get_user_data():
     return jsonify(message = "The user data has been updated"), 200
 
 
-@app.route('/all-users', methods=['GET', 'POST'])
+@app.route('/all-users', methods=['GET', 'POST', 'DELETE'])
 @jwt_required()
 def all_users():
     """
@@ -156,6 +156,8 @@ def all_users():
     }
 
     POST: Updates the user flag status
+
+    DELETE: Deletes the selected user
 
     JSON input:{
         "user_id": #Value,
@@ -174,14 +176,26 @@ def all_users():
             return jsonify(users = [user.serialize for user in all_users]), 200
         else:
             return jsonify(message="You do not have permissions to view this"), 403
-            
+    
+    elif request.method == 'DELETE':
+        user = db.session.execute(db.select(User).where(User.id == request.json['user_id'])).scalar()
+        if user.type == 0:
+            return jsonify(message="Admin account cannot be deleted"), 401
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify(message="The user has been deleted successfully"), 200
     
     # Flag or unflag a user
     if curr_user.type != 0:
         return jsonify(message = "You do not have permissions to make this request"), 403
 
     user = db.session.execute(db.select(User).where(User.id == request.json['user_id'])).scalar()
+    if not user:
+        return jsonify(message="User doesn't exist"), 404
+    if user.type == 0:
+        return jsonify(message="Admin can't be flagged"), 401
     user.flagged = not user.flagged
+    db.session.commit()
     return jsonify(message="The user flag has been updated"), 200
 
 @app.route("/campaigns", methods=['GET', 'POST', 'PUT', 'DELETE'])
