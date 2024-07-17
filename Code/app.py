@@ -44,7 +44,7 @@ def login():
         if user.flagged == True:
             return jsonify(message = "The user is flagged"), 403
         access_token = create_access_token(identity=request.json['email'], expires_delta=timedelta(days=30))
-        return jsonify(access_token = access_token), 200
+        return jsonify(access_token = access_token, user=user.serialize), 200
     else:
         return jsonify(message = "Incorrect ID or Password"), 401
     
@@ -111,7 +111,7 @@ def register():
     db.session.commit()
 
     access_token = create_access_token(identity=user.email, expires_delta=timedelta(days=30))
-    return jsonify(access_token = access_token), 201
+    return jsonify(access_token = access_token, user = user.serialize), 201
     
 @app.route('/get-user-data')
 @jwt_required()

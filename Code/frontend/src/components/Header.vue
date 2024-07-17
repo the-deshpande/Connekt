@@ -25,14 +25,47 @@ import store from "@/store";
 					</button>
 				</router-link>
 			</li>
-			<li class="nav-item mx-1">
-				<router-link to="/ping" custom v-slot="{ href, navigate, isActive }">
+			<li
+				class="nav-item mx-1"
+				v-if="
+					store.state.user &&
+					(store.state.user.type == 0 || store.state.user.type == 2)
+				">
+				<router-link to="/users" custom v-slot="{ href, navigate, isActive }">
 					<button
 						:class="{ active: isActive }"
 						:href="href"
 						@click="navigate"
 						class="nav-link text-white">
-						Ping
+						Users
+					</button>
+				</router-link>
+			</li>
+			<li class="nav-item mx-1">
+				<router-link
+					to="/campaigns"
+					custom
+					v-slot="{ href, navigate, isActive }">
+					<button
+						:class="{ active: isActive }"
+						:href="href"
+						@click="navigate"
+						class="nav-link text-white">
+						Campaigns
+					</button>
+				</router-link>
+			</li>
+			<li class="nav-item mx-1">
+				<router-link
+					to="/contracts"
+					custom
+					v-slot="{ href, navigate, isActive }">
+					<button
+						:class="{ active: isActive }"
+						:href="href"
+						@click="navigate"
+						class="nav-link text-white">
+						Contracts
 					</button>
 				</router-link>
 			</li>

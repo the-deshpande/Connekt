@@ -28,7 +28,7 @@ let sponsorRegister = reactive({
 	budget: 0,
 });
 
-function registerHandler() {
+async function registerHandler() {
 	if (
 		registerDetails.email == "" ||
 		registerDetails.password == "" ||
@@ -60,10 +60,17 @@ function registerHandler() {
 		return;
 	}
 
+	let response;
 	if (registerDetails.type == 1) {
-		store.dispatch("registerHandler", [registerDetails, influencerRegister]);
+		response = await store.dispatch("registerHandler", [
+			registerDetails,
+			influencerRegister,
+		]);
 	} else {
-		store.dispatch("registerHandler", [registerDetails, sponsorRegister]);
+		response = await store.dispatch("registerHandler", [
+			registerDetails,
+			sponsorRegister,
+		]);
 	}
 	registerDetails.email = "";
 	registerDetails.password = "";
@@ -78,6 +85,12 @@ function registerHandler() {
 	sponsorRegister.industry = "";
 	sponsorRegister.company = "";
 	sponsorRegister.budget = 0;
+
+	if (response.status == 200) {
+		router.push("/");
+	} else {
+		alert(response.data.message);
+	}
 }
 
 async function loginHandler() {
@@ -85,24 +98,17 @@ async function loginHandler() {
 		alert("Kindly fill all fields");
 		return;
 	}
-	const status = await store.dispatch("loginHandler", loginDetails);
-	console.log(status);
+	let response = await store.dispatch("loginHandler", loginDetails);
 
 	loginDetails.email = "";
 	loginDetails.password = "";
 
-	if (status == 200) {
+	if (response.status == 200) {
 		router.push("/");
-	} else if (status == 401) {
-		alert("Incorrect ID or Password");
 	} else {
-		alert(`Something went wrong! ${status}`);
+		alert(response.data.message);
 	}
 }
-
-// onBeforeUpdate(() => {
-// 	if (store.getters.isLoggedIn) router.push("/");
-// });
 </script>
 <template>
 	<main class="mb-4 container">

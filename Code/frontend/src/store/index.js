@@ -1,23 +1,27 @@
 import { createStore } from "vuex";
 import axios from "axios";
+import router from "@/router";
 
 const store = createStore({
 	state() {
 		return {
 			accessToken: localStorage.getItem("accessToken"),
-			user: JSON.parse(localStorage.getItem("userDetails")),
+			user: JSON.parse(localStorage.getItem("user")),
 		};
 	},
 	mutations: {
 		logout(state) {
 			localStorage.clear();
-			state.accessToken = "";
-			state.user = {};
+			state.accessToken = null;
+			state.user = null;
+			router.go();
 		},
 
-		loginHandler(state, access_token) {
-			state.accessToken = access_token;
-			localStorage.setItem("accessToken", access_token);
+		loginHandler(state, data) {
+			state.accessToken = data.access_token;
+			state.user = data.user;
+			localStorage.setItem("accessToken", data.access_token);
+			localStorage.setItem("user", JSON.stringify(data.user));
 		},
 
 		getUserData(state, user) {
@@ -26,28 +30,29 @@ const store = createStore({
 		},
 	},
 	actions: {
-		loginHandler({ commit }, login_details) {
+		async loginHandler({ commit }, login_details) {
 			const path = "http://127.0.0.1:5000/login";
 			return axios
 				.post(path, login_details)
 				.then((response) => {
-					commit("loginHandler", response.data.access_token);
-					return response.response.status;
+					commit("loginHandler", response.data);
+					return response;
 				})
 				.catch((response) => {
-					return response.response.status;
+					return response.response;
 				});
 		},
 
-		registerHandler({ commit }, register_details) {
+		async registerHandler({ commit }, register_details) {
 			const path = "http://127.0.0.1:5000/register";
 			return axios
 				.post(path, register_details)
 				.then((response) => {
-					commit("loginHandler", response.data.access_token);
+					commit("loginHandler", response.data);
+					return response.status;
 				})
 				.catch((response) => {
-					alert(response.response.data.message);
+					return response;
 				});
 		},
 
@@ -72,9 +77,6 @@ const store = createStore({
 	getters: {
 		isLoggedIn(state) {
 			return state.accessToken ? true : false;
-		},
-		userData(state) {
-			return state.user;
 		},
 	},
 });
