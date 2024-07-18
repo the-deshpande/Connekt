@@ -42,11 +42,12 @@ const campaigns = response.data.campaigns;
 				@click="openModal(campaign)">
 				<div class="d-flex w-100 justify-content-between">
 					<h5 class="mb-1">{{ campaign.name }}</h5>
-					<small
-						><i
+					<small v-if="campaign.approved">
+						<i
 							class="bi bi-flag-fill"
 							:class="{ 'text-danger': campaign.flagged }"></i
 					></small>
+					<small v-else> <i class="bi bi-clock text-info"></i></small>
 				</div>
 				<p class="mb-1">
 					{{ campaign.sponsor.sponsor.company }}
@@ -60,3 +61,12 @@ const campaigns = response.data.campaigns;
 		@closePopup="modalActive = false"
 		:campaign="detail"></ModalWindow>
 </template>
+
+<style lang="scss" scoped>
+div button.bg-gray {
+	background-color: #758694;
+}
+div button.bg-gray:hover {
+	background-color: #405d72;
+}
+</style>

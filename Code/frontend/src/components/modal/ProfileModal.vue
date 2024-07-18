@@ -40,11 +40,14 @@ async function deleteUser() {
 				return response;
 			})
 			.catch((response) => {
+				alert(response.response.data.message);
 				return response.response;
 			});
 
 		console.log(response);
-		store.commit("logout");
+		if (response.status == 200) {
+			store.commit("logout");
+		}
 	}
 }
 </script>

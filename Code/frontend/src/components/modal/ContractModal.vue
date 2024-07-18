@@ -18,6 +18,7 @@ function openCampaignModal(details) {
 	this.campaignModalActive = true;
 }
 
+defineEmits(["closePopup"]);
 var contract = defineProps(["contract"]);
 contract = contract.contract;
 </script>

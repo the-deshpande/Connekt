@@ -4,6 +4,7 @@ import axios from "axios";
 import router from "@/router";
 import { ref } from "vue";
 
+defineEmits(["closePopup"]);
 var user = defineProps(["user"]);
 user = ref(user.user);
 
@@ -45,6 +46,7 @@ async function deleteUser(user_id) {
 				return response;
 			})
 			.catch((response) => {
+				alert(response.response.data.message);
 				return response.response;
 			});
 		console.log(response);

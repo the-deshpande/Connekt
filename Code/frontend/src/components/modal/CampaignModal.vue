@@ -2,6 +2,7 @@
 import store from "@/store";
 import ModalWindow from "./UserModal.vue";
 import { ref } from "vue";
+import axios from "axios";
 
 let modalActive = ref(false);
 let detail = ref({});
@@ -11,13 +12,86 @@ function openModal(details) {
 	this.modalActive = true;
 }
 
+async function flagCampaign(campaign_id) {
+	const path = "http://127.0.0.1:5000/campaigns";
+	var response = await axios
+		.post(
+			path,
+			{ campaign_id: campaign_id },
+			{
+				headers: {
+					Authorization: `Bearer ${store.state.accessToken}`,
+				},
+			}
+		)
+		.then((response) => {
+			if (this.campaign.approved) {
+				this.campaign.flagged = !this.campaign.flagged;
+			} else {
+				this.campaign.approved = true;
+			}
+			return response;
+		})
+		.catch((response) => {
+			alert(response.response.data.message);
+			return response.response;
+		});
+	console.log(response);
+}
+
+async function deleteCampaign(campaign_id) {
+	if (confirm("Are you sure?")) {
+		const path = "http://127.0.0.1:5000/campaigns";
+		var response = await axios
+			.delete(path, {
+				headers: {
+					Authorization: `Bearer ${store.state.accessToken}`,
+				},
+				data: { campaign_id: campaign_id },
+			})
+			.then((response) => {
+				return response;
+			})
+			.catch((response) => {
+				alert(response.response.data.message);
+				return response.response;
+			});
+		console.log(response);
+		if (response.status == 202) {
+			router.go();
+		}
+	}
+}
+
+let editMode = ref(false);
+async function editCampaign() {
+	const path = "http://127.0.0.1:5000/campaigns";
+	var response = await axios
+		.put(path, this.campaign, {
+			headers: {
+				Authorization: `Bearer ${store.state.accessToken}`,
+			},
+		})
+		.then((response) => {
+			store.dispatch("getUserData", store.state.accessToken);
+			return response;
+		})
+		.catch((response) => {
+			return response.response;
+		});
+
+	console.log(response);
+	this.editMode = false;
+}
+
+defineEmits(["closePopup"]);
 var campaign = defineProps(["campaign"]);
-campaign = campaign.campaign;
+campaign = ref(campaign.campaign);
 </script>
 
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
-		<div class="inner">
+		<div class="inner" v-if="!editMode">
 			<h2>Campaign Modal</h2>
 			<button class="close-btn" @click="$emit('closePopup')">
 				<i class="bi bi-x-lg"></i>
@@ -35,6 +109,10 @@ campaign = campaign.campaign;
 					<span class="fw-bold">Description:</span>
 					{{ campaign.description }}
 				</div>
+				<div>
+					<span class="fw-bold">Visibility:</span>
+					{{ campaign.public ? "Public" : "Private" }}
+				</div>
 				<div class="row">
 					<div class="col">
 						<span class="fw-bold">Start Date:</span>
@@ -47,11 +125,13 @@ campaign = campaign.campaign;
 				</div>
 				<div class="row">
 					<button
+						@click="flagCampaign(campaign.id)"
 						class="btn col"
 						v-if="store.state.user.type == 0 && !campaign.approved">
 						<h2><i class="bi bi-check-lg text-success"></i></h2>
 					</button>
 					<button
+						@click="flagCampaign(campaign.id)"
 						class="btn col"
 						v-else-if="store.state.user.type == 0 && campaign.approved">
 						<i
@@ -60,6 +140,7 @@ campaign = campaign.campaign;
 					</button>
 
 					<button
+						@click="editMode = true"
 						class="btn col"
 						v-if="
 							store.state.user.type == 0 ||
@@ -68,7 +149,7 @@ campaign = campaign.campaign;
 						<i class="bi bi-pencil text-warning"></i>
 					</button>
 
-					<button class="btn col">
+					<button class="btn col" @click="deleteCampaign(campaign.id)">
 						<i class="bi bi-trash-fill text-danger"></i>
 					</button>
 				</div>
@@ -77,6 +158,74 @@ campaign = campaign.campaign;
 					<button class="btn btn-green text-white col">Create Contract</button>
 					<div class="col"></div>
 				</div>
+			</div>
+		</div>
+		<div class="inner" v-else>
+			<div class="row my-2">
+				<label for="name" class="col-3 form-label">Name: </label>
+				<input
+					type="text"
+					id="name"
+					class="col form-control"
+					v-model="campaign.name" />
+			</div>
+
+			<div class="row my-2">
+				<label for="description" class="col-3 form-label">Description: </label>
+				<input
+					type="text"
+					id="description"
+					class="col form-control"
+					v-model="campaign.description" />
+			</div>
+
+			<div class="row my-2">
+				<label for="public" class="col-3 form-label">Visibility: </label>
+				<button
+					type="checkbox"
+					id="public"
+					class="col btn"
+					:class="[
+						campaign.public ? 'btn-outline-success' : 'btn-outline-danger',
+					]"
+					@click="campaign.public = !campaign.public">
+					{{ campaign.public ? "Public" : "Private" }}
+				</button>
+			</div>
+
+			<div class="row my-2">
+				<label for="start-date" class="col-3 form-label">Start Date: </label>
+				<input
+					type="date"
+					id="start-date"
+					class="col form-control"
+					v-model="campaign.start_date" />
+			</div>
+
+			<div class="row my-2">
+				<label for="end-date" class="col-3 form-label">End Date: </label>
+				<input
+					type="date"
+					id="end-date"
+					class="col form-control"
+					v-model="campaign.end_date" />
+			</div>
+
+			<div class="row my-2">
+				<label for="goals" class="col-3 form-label">Goals: </label>
+				<input
+					type="number"
+					id="goals"
+					class="col form-control"
+					v-model="campaign.goals" />
+			</div>
+
+			<div class="row">
+				<div class="col"></div>
+				<button @click="editCampaign()" class="btn col btn-green text-white">
+					Make Changes
+				</button>
+				<div class="col"></div>
 			</div>
 		</div>
 	</div>

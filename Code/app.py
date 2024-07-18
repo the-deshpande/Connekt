@@ -229,11 +229,11 @@ def campaigns():
         "campaign_id": #Value,
     }
     Admin PUT: {
-        "campaign_id": #Value,
+        "id": #Value,
         "name": #Value,
-        "desc": #Value,
-        "start": #Value,
-        "end": #Value,
+        "description": #Value,
+        "start_date": #Value,
+        "end_date": #Value,
         "public": #Value,
         "goals": #Value,
     }
@@ -274,15 +274,15 @@ def campaigns():
         
         if request.method == 'PUT':
             campaign = db.session.execute(db.select(Campaign)
-                                          .where(Campaign.id == request.json['campaign_id'])).scalar()
+                                          .where(Campaign.id == request.json['id'])).scalar()
             if campaign is None:
                 return jsonify(message="Incorrect Campaign ID"), 404
             
             campaign.name = request.json['name']
-            campaign.description = request.json['desc']
-            campaign.start_date = datetime.strptime(request.json['start'], '%d-%m-%Y').date()
-            campaign.end_date = datetime.strptime(request.json['end'], '%d-%m-%Y').date()
-            campaign.public = request.json['public'] == 'true'
+            campaign.description = request.json['description']
+            campaign.start_date = datetime.strptime(request.json['start_date'], '%Y-%m-%d').date()
+            campaign.end_date = datetime.strptime(request.json['end_date'], '%Y-%m-%d').date()
+            campaign.public = request.json['public']
             campaign.goals = int(request.json['goals'])
 
             db.session.commit()
@@ -299,6 +299,7 @@ def campaigns():
             return jsonify(message="The campaign has been successfully deleted"), 202
 
         # If campaign is approved changes the flagged status, else approves it
+        print(request.json)
         campaign = db.session.execute(db.select(Campaign).where(Campaign.id == request.json['campaign_id'])).scalar()
         if campaign.approved:
             campaign.flagged = not campaign.flagged

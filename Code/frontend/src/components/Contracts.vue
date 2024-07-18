@@ -65,3 +65,12 @@ const contracts = response.data.contracts;
 		@closePopup="modalActive = false"
 		:contract="detail"></ModalWindow>
 </template>
+
+<style lang="scss" scoped>
+div button.bg-gray {
+	background-color: #758694;
+}
+div button.bg-gray:hover {
+	background-color: #405d72;
+}
+</style>
