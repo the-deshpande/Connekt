@@ -406,7 +406,7 @@ def contract():
 
     JSON input:
     Admin PUT: {
-        "contract_id": #Value,
+        "id": #Value,
         "requirements": #Value,
         "payment_amount": #Value,
     }
@@ -445,7 +445,7 @@ def contract():
             return jsonify(contracts = [contract.serialize for contract in contracts]), 200
         
         if request.method == 'PUT': # Edit a contract
-            contract = db.session.execute(db.select(Contract).where(Contract.id == request.json['contract_id'])).scalar()
+            contract = db.session.execute(db.select(Contract).where(Contract.id == request.json['id'])).scalar()
             
             if contract is None:
                 return jsonify(message="Some problem occured while retrieving contract"), 401

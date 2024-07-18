@@ -1,8 +1,10 @@
 <script setup>
 import store from "@/store";
+import router from "@/router";
 import UserModalWindow from "./UserModal.vue";
 import CampaignModalWindow from "./CampaignModal.vue";
 import { ref } from "vue";
+import axios from "axios";
 
 let userModalActive = ref(false);
 let campaignModalActive = ref(false);
@@ -13,19 +15,63 @@ function openUserModal(details) {
 	this.userModalActive = true;
 }
 function openCampaignModal(details) {
-	console.log("Hello");
 	this.detail = details;
 	this.campaignModalActive = true;
 }
 
+async function deleteContract(contract_id) {
+	if (confirm("Are you sure?")) {
+		const path = "http://127.0.0.1:5000/contract";
+		var response = await axios
+			.delete(path, {
+				headers: {
+					Authorization: `Bearer ${store.state.accessToken}`,
+				},
+				data: {
+					contract_id: contract_id,
+				},
+			})
+			.then((response) => response)
+			.catch((response) => response.response);
+
+		if (response.status == 202) {
+			router.go();
+		} else {
+			alert(response.data.message);
+		}
+		console.log(response);
+	}
+}
+
+var editMode = ref(false);
+async function updateContract() {
+	const path = "http://127.0.0.1:5000/contract";
+	var response = await axios
+		.put(path, this.contract, {
+			headers: {
+				Authorization: `Bearer ${store.state.accessToken}`,
+			},
+		})
+		.then((response) => {
+			store.dispatch("getUserData", store.state.accessToken);
+			return response;
+		})
+		.catch((response) => {
+			return response.response;
+		});
+
+	console.log(response);
+	this.editMode = false;
+}
+
 defineEmits(["closePopup"]);
 var contract = defineProps(["contract"]);
-contract = contract.contract;
+contract = ref(contract.contract);
 </script>
 
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
-		<div class="inner">
+		<div class="inner" v-if="!editMode">
 			<h2>Contract Details</h2>
 			<button class="close-btn" @click="$emit('closePopup')">
 				<i class="bi bi-x-lg"></i>
@@ -50,15 +96,7 @@ contract = contract.contract;
 				</div>
 				<div class="row">
 					<button
-						class="btn col"
-						v-if="
-							store.state.user.type == 0 ||
-							contract.influencer.id == store.state.user.id ||
-							contract.campaign.sponsor.id == store.state.user.id
-						">
-						<i class="bi bi-trash-fill text-danger"></i>
-					</button>
-					<button
+						@click="editMode = true"
 						class="btn col"
 						v-if="
 							store.state.user.type == 0 ||
@@ -69,7 +107,48 @@ contract = contract.contract;
 						">
 						<i class="bi bi-pencil text-warning"></i>
 					</button>
+					<button
+						@click="deleteContract(contract.id)"
+						class="btn col"
+						v-if="
+							store.state.user.type == 0 ||
+							contract.influencer.id == store.state.user.id ||
+							contract.campaign.sponsor.id == store.state.user.id
+						">
+						<i class="bi bi-trash-fill text-danger"></i>
+					</button>
 				</div>
+			</div>
+		</div>
+		<div class="inner" v-else>
+			<div class="row my-2">
+				<label for="requirements" class="col-3 form-label"
+					>Requirements:
+				</label>
+				<input
+					type="text"
+					id="requirements"
+					class="col form-control"
+					v-model="contract.requirements" />
+			</div>
+
+			<div class="row my-2">
+				<label for="payment-amount" class="col-3 form-label"
+					>Payment Amount:
+				</label>
+				<input
+					type="number"
+					id="payment-amount"
+					class="col form-control"
+					v-model="contract.payment_amount" />
+			</div>
+
+			<div class="row">
+				<div class="col"></div>
+				<button @click="updateContract()" class="btn col btn-green text-white">
+					Make Changes
+				</button>
+				<div class="col"></div>
 			</div>
 		</div>
 	</div>
@@ -124,6 +203,10 @@ contract = contract.contract;
 
 		.link:hover {
 			color: darkcyan;
+		}
+
+		.btn-green {
+			background-color: #468585;
 		}
 	}
 }
