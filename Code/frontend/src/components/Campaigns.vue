@@ -1,37 +1,40 @@
 <script setup>
 import store from "@/store";
 import axios from "axios";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import ModalWindow from "./modal/CampaignModal.vue";
+import AddItemModal from "./modal/AddItemModal.vue";
 
 let modalActive = ref(false);
-let detail = ref({});
+let detail = reactive({});
 function openModal(details) {
 	this.detail = details;
 	this.modalActive = true;
 }
-
-async function getCampaignsList() {
-	const path = "http://127.0.0.1:5000/campaigns";
-	return axios
-		.get(path, {
-			headers: {
-				Authorization: `Bearer ${store.state.accessToken}`,
-			},
-		})
-		.then((response) => {
-			return response;
-		})
-		.catch((response) => {
-			return response.response;
-		});
+let addItem = ref(false);
+let item = reactive({});
+function createCampaign() {
+	this.item.item = 0;
+	this.addItem = true;
 }
 
-const response = await getCampaignsList();
+const response = await store.dispatch(
+	"getCampaignsList",
+	store.state.accessToken
+);
 const campaigns = response.data.campaigns;
 </script>
 
 <template>
+	<div class="container mb-5" v-if="store.state.user.type == 2">
+		<div class="row">
+			<div class="col-5"></div>
+			<button class="col btn btn-green text-white" @click="createCampaign()">
+				Add Campaign
+			</button>
+			<div class="col-5"></div>
+		</div>
+	</div>
 	<div class="container">
 		<div v-if="campaigns.length == 0" class="text-white fs-1 text-center">
 			Uh Oh! Seems like there are no campaigns.
@@ -44,10 +47,10 @@ const campaigns = response.data.campaigns;
 					<h5 class="mb-1">{{ campaign.name }}</h5>
 					<small v-if="campaign.approved">
 						<i
-							class="bi bi-flag-fill"
+							class="bi bi-flag-fill fs-3"
 							:class="{ 'text-danger': campaign.flagged }"></i
 					></small>
-					<small v-else> <i class="bi bi-clock text-info"></i></small>
+					<small v-else> <i class="bi bi-clock text-info fs-3"></i></small>
 				</div>
 				<p class="mb-1">
 					{{ campaign.sponsor.sponsor.company }}
@@ -60,6 +63,10 @@ const campaigns = response.data.campaigns;
 		v-if="modalActive"
 		@closePopup="modalActive = false"
 		:campaign="detail"></ModalWindow>
+	<AddItemModal
+		v-if="addItem"
+		@closePopup="addItem = false"
+		:item="item"></AddItemModal>
 </template>
 
 <style lang="scss" scoped>
@@ -68,5 +75,8 @@ div button.bg-gray {
 }
 div button.bg-gray:hover {
 	background-color: #405d72;
+}
+.btn-green {
+	background-color: #468585;
 }
 </style>

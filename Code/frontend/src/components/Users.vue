@@ -2,10 +2,10 @@
 import store from "@/store";
 import axios from "axios";
 import ModalWindow from "./modal/UserModal.vue";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 
 let modalActive = ref(false);
-let detail = ref({});
+let detail = reactive({});
 
 function openModal(details) {
 	this.detail = details;
@@ -13,23 +13,7 @@ function openModal(details) {
 	this.modalActive = true;
 }
 
-async function getUsersList() {
-	const path = "http://127.0.0.1:5000/all-users";
-	return axios
-		.get(path, {
-			headers: {
-				Authorization: `Bearer ${store.state.accessToken}`,
-			},
-		})
-		.then((response) => {
-			return response;
-		})
-		.catch((response) => {
-			return response.response;
-		});
-}
-
-const response = await getUsersList();
+const response = await store.dispatch("getUsersList", store.state.accessToken);
 const users = response.data.users;
 </script>
 
@@ -46,7 +30,7 @@ const users = response.data.users;
 					<h5 class="mb-1">{{ user.first_name }} {{ user.last_name }}</h5>
 					<small
 						><i
-							class="bi bi-flag-fill"
+							class="bi bi-flag-fill fs-3"
 							:class="{ 'text-danger': user.flagged }"></i
 					></small>
 				</div>

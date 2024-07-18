@@ -2,11 +2,20 @@
 import store from "@/store";
 import axios from "axios";
 import router from "@/router";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
+import AddItemModal from "./AddItemModal.vue";
 
 defineEmits(["closePopup"]);
 var user = defineProps(["user"]);
-user = ref(user.user);
+user = reactive(user.user);
+
+let addItem = ref(false);
+let item = reactive({});
+function createContract() {
+	this.item.item = 1;
+	this.item.influencer_id = this.user.influencer.id;
+	this.addItem = true;
+}
 
 async function flagUser(user_id) {
 	const path = "http://127.0.0.1:5000/all-users";
@@ -120,11 +129,18 @@ async function deleteUser(user_id) {
 			</div>
 			<div class="row" v-if="store.state.user.type == 2">
 				<div class="col"></div>
-				<button class="btn btn-green text-white col">Create Contract</button>
+				<button @click="createContract()" class="btn btn-green text-white col">
+					Create Contract
+				</button>
 				<div class="col"></div>
 			</div>
 		</div>
 	</div>
+
+	<AddItemModal
+		v-if="addItem"
+		@closePopup="addItem = false"
+		:item="item"></AddItemModal>
 </template>
 
 <style lang="scss" scoped>

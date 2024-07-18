@@ -1,15 +1,23 @@
 <script setup>
 import store from "@/store";
+import router from "@/router";
 import ModalWindow from "./UserModal.vue";
-import { ref } from "vue";
+import AddItemModal from "./AddItemModal.vue";
+import { ref, reactive } from "vue";
 import axios from "axios";
 
 let modalActive = ref(false);
-let detail = ref({});
-
+let detail = reactive({});
 function openModal(details) {
 	this.detail = details;
 	this.modalActive = true;
+}
+let addItem = ref(false);
+let item = reactive({});
+function createContract() {
+	this.item.item = 1;
+	this.item.campaign_id = this.campaign.id;
+	this.addItem = true;
 }
 
 async function flagCampaign(campaign_id) {
@@ -65,6 +73,17 @@ async function deleteCampaign(campaign_id) {
 
 let editMode = ref(false);
 async function editCampaign() {
+	if (
+		this.campaign.name == "" ||
+		this.campaign.description == "" ||
+		this.campaign.start_date == "" ||
+		this.campaign.end_date == "" ||
+		this.campaign.goals == 0 ||
+		Date.parse(this.campaign.start_date) > Date.parse(this.campaign.end_date)
+	) {
+		alert("Please enter the data correctly");
+		return;
+	}
 	const path = "http://127.0.0.1:5000/campaigns";
 	var response = await axios
 		.put(path, this.campaign, {
@@ -73,10 +92,11 @@ async function editCampaign() {
 			},
 		})
 		.then((response) => {
-			store.dispatch("getUserData", store.state.accessToken);
+			this.campaign.approved = false;
 			return response;
 		})
 		.catch((response) => {
+			router.go();
 			return response.response;
 		});
 
@@ -149,18 +169,29 @@ campaign = ref(campaign.campaign);
 						<i class="bi bi-pencil text-warning"></i>
 					</button>
 
-					<button class="btn col" @click="deleteCampaign(campaign.id)">
+					<button
+						class="btn col"
+						v-if="!store.state.user.influencer"
+						@click="deleteCampaign(campaign.id)">
 						<i class="bi bi-trash-fill text-danger"></i>
 					</button>
 				</div>
 				<div class="row" v-if="store.state.user.type == 2">
 					<div class="col"></div>
-					<button class="btn btn-green text-white col">Create Contract</button>
+					<button
+						@click="createContract()"
+						class="btn btn-green text-white col"
+						:disabled="!campaign.approved || campaign.flagged">
+						Create Contract
+					</button>
 					<div class="col"></div>
 				</div>
 			</div>
 		</div>
 		<div class="inner" v-else>
+			<button class="close-btn" @click="$emit('closePopup')">
+				<i class="bi bi-x-lg"></i>
+			</button>
 			<div class="row my-2">
 				<label for="name" class="col-3 form-label">Name: </label>
 				<input
@@ -233,6 +264,10 @@ campaign = ref(campaign.campaign);
 		v-if="modalActive"
 		@closePopup="modalActive = false"
 		:user="detail"></ModalWindow>
+	<AddItemModal
+		v-if="addItem"
+		@closePopup="addItem = false"
+		:item="item"></AddItemModal>
 </template>
 
 <style lang="scss" scoped>
@@ -276,6 +311,7 @@ campaign = ref(campaign.campaign);
 
 		.user:hover {
 			color: darkcyan;
+			cursor: pointer;
 		}
 
 		.btn-green {

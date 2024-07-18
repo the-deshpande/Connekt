@@ -3,12 +3,12 @@ import store from "@/store";
 import router from "@/router";
 import UserModalWindow from "./UserModal.vue";
 import CampaignModalWindow from "./CampaignModal.vue";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 import axios from "axios";
 
 let userModalActive = ref(false);
 let campaignModalActive = ref(false);
-let detail = ref({});
+let detail = reactive({});
 
 function openUserModal(details) {
 	this.detail = details;
@@ -45,6 +45,35 @@ async function deleteContract(contract_id) {
 
 var editMode = ref(false);
 async function updateContract() {
+	if (this.contract.requirements == "" || this.contract.payment_amount == 0) {
+		alert("Please enter all details correctly!");
+		return;
+	}
+	const path = "http://127.0.0.1:5000/contract";
+	var response = await axios
+		.put(path, this.contract, {
+			headers: {
+				Authorization: `Bearer ${store.state.accessToken}`,
+			},
+		})
+		.then((response) => {
+			store.dispatch("getUserData", store.state.accessToken);
+			if (store.state.user.influencer) this.contract.status = 1;
+			else this.contract.status = 2;
+			return response;
+		})
+		.catch((response) => {
+			return response.response;
+		});
+
+	console.log(response);
+	this.editMode = false;
+}
+
+async function updateStatus(approved) {
+	if (approved) this.contract.status = 3;
+	else this.contract.status = 0;
+
 	const path = "http://127.0.0.1:5000/contract";
 	var response = await axios
 		.put(path, this.contract, {
@@ -96,6 +125,28 @@ contract = ref(contract.contract);
 				</div>
 				<div class="row">
 					<button
+						@click="updateStatus(false)"
+						class="btn col"
+						v-if="
+							(contract.influencer.id == store.state.user.id &&
+								contract.status == 2) ||
+							(contract.campaign.sponsor.id == store.state.user.id &&
+								contract.status == 1)
+						">
+						<i class="bi bi-ban text-danger"></i>
+					</button>
+					<button
+						@click="updateStatus(true)"
+						class="btn col"
+						v-if="
+							(contract.influencer.id == store.state.user.id &&
+								contract.status == 2) ||
+							(contract.campaign.sponsor.id == store.state.user.id &&
+								contract.status == 1)
+						">
+						<i class="fs-5 bi bi-check2-circle text-success"></i>
+					</button>
+					<button
 						@click="editMode = true"
 						class="btn col"
 						v-if="
@@ -121,6 +172,9 @@ contract = ref(contract.contract);
 			</div>
 		</div>
 		<div class="inner" v-else>
+			<button class="close-btn" @click="$emit('closePopup')">
+				<i class="bi bi-x-lg"></i>
+			</button>
 			<div class="row my-2">
 				<label for="requirements" class="col-3 form-label"
 					>Requirements:
@@ -203,6 +257,7 @@ contract = ref(contract.contract);
 
 		.link:hover {
 			color: darkcyan;
+			cursor: pointer;
 		}
 
 		.btn-green {

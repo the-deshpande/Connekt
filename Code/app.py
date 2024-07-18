@@ -211,7 +211,6 @@ def campaigns():
     POST: {
         Admin: If the campaign is not approved then approves it or else updates the flag status
         Sponsor: Creates a new campaign
-        Influencer: Creates an ad request for a selected Campaign
     }
     
     PUT: {
@@ -242,28 +241,23 @@ def campaigns():
     }
     Sponsor POST: {
         "name": #Value,
-        "desc": #Value,
-        "start": #Value,
-        "end": #Value,
+        "description": #Value,
+        "start_date": #Value,
+        "end_date": #Value,
         "public": #Value,
         "goals": #Value,
     }
     Sponsor PUT: {
-        "campaign_id": #Value,
+        "id": #Value,
         "name": #Value,
-        "desc": #Value,
-        "start": #Value,
-        "end": #Value,
+        "description": #Value,
+        "start_date": #Value,
+        "end_date": #Value,
         "public": #Value,
         "goals": #Value,
     }
     Sponsor DELETE: {
         "campaign_id": #Value,
-    }
-    Influencer: {
-        "campaign_id": #Value,
-        "requirements": #Value,
-        "payment_amount": #Value,
     }
     """
     user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
@@ -311,23 +305,13 @@ def campaigns():
             return jsonify(message = "The campaign has been approved!"), 200
     
     elif user.type == 1: # Influencer
-        if request.method == 'GET': # Get the campaigns in the public and approved and not flagged
-            campaigns = db.session.execute(db.select(Campaign).where(Campaign.approved)
-                                           .where(Campaign.public).where(Campaign.flagged == False)).scalars()
-            return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
+        if request.method in ['PUT', 'DELETE', 'POST']:
+            return jsonify(message="You are not authorized to use these!"), 401
         
-        campaign = db.session.execute(db.select(Campaign).where(Campaign.id == request.json['campaign_id'])).scalar()
-        contract = Contract(
-            influencer_id = user.influencer.id,
-            campaign_id = campaign.id,
-            requirements = request.json['requirements'],
-            payment_amount = request.json['payment_amount'],
-            status = 1 # made by influencer
-        )
-        db.session.add(contract)
-        db.session.commit()
-
-        return jsonify(message = "The Ad request has been sent!"), 201
+        # Get the campaigns in the public and approved and not flagged
+        campaigns = db.session.execute(db.select(Campaign).where(Campaign.approved)
+                                        .where(Campaign.public).where(Campaign.flagged == False)).scalars()
+        return jsonify(campaigns = [campaign.serialize for campaign in campaigns]), 200
         
     else: # Sponsor
         if request.method == 'GET': # Get all your campaings
@@ -335,16 +319,16 @@ def campaigns():
         
         if request.method == 'PUT': # Update a campaign
             campaign = db.session.execute(db.select(Campaign)
-                                          .where(Campaign.id == request.json['campaign_id'])
+                                          .where(Campaign.id == request.json['id'])
                                           .where(Campaign.sponsor_id == user.sponsor.id)).scalar()
             if campaign is None:
                 return jsonify(message="Incorrect Campaign ID"), 401
             
             campaign.name = request.json['name']
-            campaign.description = request.json['desc']
-            campaign.start_date = datetime.strptime(request.json['start'], '%d-%m-%Y').date()
-            campaign.end_date = datetime.strptime(request.json['end'], '%d-%m-%Y').date()
-            campaign.public = request.json['public'] == 'true'
+            campaign.description = request.json['description']
+            campaign.start_date = datetime.strptime(request.json['start_date'], '%Y-%m-%d').date()
+            campaign.end_date = datetime.strptime(request.json['end_date'], '%Y-%m-%d').date()
+            campaign.public = request.json['public']
             campaign.goals = int(request.json['goals'])
             campaign.approved = False
 
@@ -366,9 +350,9 @@ def campaigns():
         campaign = Campaign(
             sponsor_id = user.sponsor.id,
             name = request.json['name'],
-            description = request.json['desc'],
-            start_date = datetime.strptime(request.json['start'], '%d-%m-%Y').date(),
-            end_date = datetime.strptime(request.json['end'], '%d-%m-%Y').date(),
+            description = request.json['description'],
+            start_date = datetime.strptime(request.json['start_date'], '%Y-%m-%d').date(),
+            end_date = datetime.strptime(request.json['end_date'], '%Y-%m-%d').date(),
             public = request.json['public'] == 'true',
             goals = int(request.json['goals']),
         )
@@ -390,6 +374,7 @@ def contract():
 
     POST: {
         Sponsor: Creates a new contract
+        Influencer: Creates an ad request for a selected Campaign
     }
 
     PUT: {
@@ -420,7 +405,7 @@ def contract():
         "payment_amount": #Value
     }
     Sponsor PUT: {
-        "contract_id": #Value,
+        "id": #Value,
         "requirements": #Value,
         "payment_amount": #Value,
         "status": #Value,
@@ -429,13 +414,18 @@ def contract():
         "contract_id": #Value,
     }
     Influencer PUT: {
-        "contract_id": #Value,
+        "id": #Value,
         "requirements": #Value,
         "payment_amount": #Value,
         "status": #Value,
     }
     Influencer DELETE: {
         "contract_id": #Value,
+    }
+    Influencer POST: {
+        "campaign_id": #Value,
+        "requirements": #Value,
+        "payment_amount": #Value,
     }
     """
     user = db.session.execute(db.select(User).where(User.email == get_jwt_identity())).scalar()
@@ -479,7 +469,7 @@ def contract():
         
         if request.method == 'PUT': # Approve or reject a pending contract
             contract = db.session.execute(db.select(Contract)
-                                          .where(Contract.id == request.json['contract_id'])
+                                          .where(Contract.id == request.json['id'])
                                           .where(Contract.influencer_id == user.influencer.id)).scalar()
             
             if contract is None:
@@ -512,7 +502,18 @@ def contract():
             return jsonify(message="The contract has been successfully deleted"), 202
 
         else:
-            return jsonify(message="You don't have any use of this api"), 403
+            campaign = db.session.execute(db.select(Campaign).where(Campaign.id == request.json['campaign_id'])).scalar()
+            contract = Contract(
+                influencer_id = user.influencer.id,
+                campaign_id = campaign.id,
+                requirements = request.json['requirements'],
+                payment_amount = request.json['payment_amount'],
+                status = 1 # made by influencer
+            )
+            db.session.add(contract)
+            db.session.commit()
+
+            return jsonify(message = "The Ad request has been sent!"), 201
     
     else: # Sponsor
         if request.method == "GET": # Get all contracts of the sponsor
@@ -523,16 +524,14 @@ def contract():
         if request.method == "POST": # Create a new Contract
             campaign = db.session.execute(db.select(Campaign)
                                           .where(Campaign.id == request.json['campaign_id'])
-                                          .where(Campaign.approved).where(Campaign.flagged == False)
-                                          .where(Contract.campaign.has(sponsor_id=user.sponsor.id))).scalar()
+                                          .where(Campaign.approved).where(Campaign.flagged == False)).scalar()
             influencer = db.session.execute(db.select(User)
-                                            .where()
                                             .where(User.influencer.has(id = request.json['influencer_id']))).scalar()
-            
+            print(campaign, influencer)
             if campaign is None or influencer is None:
                 return jsonify(message="Some error occured while quering the campaign and influencer"), 404
             contract = Contract(
-                influencer_id = user.influencer.id,
+                influencer_id = influencer.influencer.id,
                 campaign_id = campaign.id,
                 requirements = request.json['requirements'],
                 payment_amount = request.json['payment_amount'],
@@ -544,7 +543,7 @@ def contract():
         
         if request.method == "PUT": # Edit the contract or approve it
             contract = db.session.execute(db.select(Contract)
-                                          .where(Contract.id == request.json['contract_id'])
+                                          .where(Contract.id == request.json['id'])
                                           .where(Contract.campaign.has(sponsor_id = user.sponsor.id))).scalar()
             if contract is None:
                 return jsonify(message="Some problem occured while retrieving contract"), 401
@@ -552,8 +551,8 @@ def contract():
             if contract.status != 1:
                 return jsonify(message = "The status doesn't seem to need your approval!"), 401
             
-            if request.json['status'] != 2:
-                contract.status = request['status']
+            if request.json['status'] != 1:
+                contract.status = request.json['status']
                 db.session.commit()
                 return jsonify(message="The contract action has been completed!"), 200
             

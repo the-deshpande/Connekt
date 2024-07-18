@@ -1,11 +1,11 @@
 <script setup>
 import store from "@/store";
 import axios from "axios";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 
 let editMode = ref(false);
 
-let user = ref(store.state.user);
+let user = reactive(store.state.user);
 
 async function updateProfile() {
 	const path = "http://127.0.0.1:5000/get-user-data";
@@ -115,6 +115,9 @@ async function deleteUser() {
 			</div>
 		</div>
 		<div class="inner" v-else>
+			<button class="close-btn" @click="$emit('closePopup')">
+				<i class="bi bi-x-lg"></i>
+			</button>
 			<div class="row my-2">
 				<label for="first-name" class="col-3 form-label">First Name: </label>
 				<input
