@@ -172,7 +172,7 @@ async function loginHandler() {
 						<div class="row my-4">
 							<input
 								type="button"
-								class="btn btn-secondary fs-4"
+								class="btn btn-green text-white fs-4"
 								value="Login"
 								@click="loginHandler()" />
 						</div>
@@ -361,7 +361,7 @@ async function loginHandler() {
 						<div class="row my-4">
 							<input
 								type="button"
-								class="btn btn-secondary fs-4"
+								class="btn btn-green fs-4 text-white"
 								value="Register"
 								@click="registerHandler()" />
 						</div>
@@ -379,5 +379,8 @@ async function loginHandler() {
 .page-link.active {
 	border-color: #9cdba6;
 	border-width: 2px;
+}
+.btn-green {
+	background-color: #468585;
 }
 </style>

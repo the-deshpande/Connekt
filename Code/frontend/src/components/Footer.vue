@@ -54,4 +54,8 @@
 	filter: invert(100%) sepia(2%) saturate(1560%) hue-rotate(261deg)
 		brightness(115%) contrast(100%);
 }
+img:hover {
+	filter: invert(86%) sepia(21%) saturate(511%) hue-rotate(75deg)
+		brightness(93%) contrast(89%);
+}
 </style>

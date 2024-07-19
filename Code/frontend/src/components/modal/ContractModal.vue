@@ -100,10 +100,10 @@ contract = ref(contract.contract);
 
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
-		<div class="inner" v-if="!editMode">
-			<h2>Contract Details</h2>
+		<div class="inner text-white" v-if="!editMode">
+			<h2 class="text-green">Contract Details</h2>
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 			<div class="row">
 				<div>
@@ -133,7 +133,7 @@ contract = ref(contract.contract);
 							(contract.campaign.sponsor.id == store.state.user.id &&
 								contract.status == 1)
 						">
-						<i class="bi bi-ban text-danger"></i>
+						<i class="bi fs-4 bi-ban text-danger"></i>
 					</button>
 					<button
 						@click="updateStatus(true)"
@@ -144,7 +144,7 @@ contract = ref(contract.contract);
 							(contract.campaign.sponsor.id == store.state.user.id &&
 								contract.status == 1)
 						">
-						<i class="fs-5 bi bi-check2-circle text-success"></i>
+						<i class="fs-4 bi bi-check2-circle text-success"></i>
 					</button>
 					<button
 						@click="editMode = true"
@@ -156,7 +156,7 @@ contract = ref(contract.contract);
 							(contract.campaign.sponsor.id == store.state.user.id &&
 								contract.status == 1)
 						">
-						<i class="bi bi-pencil text-warning"></i>
+						<i class="bi fs-4 bi-pencil text-warning"></i>
 					</button>
 					<button
 						@click="deleteContract(contract.id)"
@@ -166,14 +166,14 @@ contract = ref(contract.contract);
 							contract.influencer.id == store.state.user.id ||
 							contract.campaign.sponsor.id == store.state.user.id
 						">
-						<i class="bi bi-trash-fill text-danger"></i>
+						<i class="bi fs-4 bi-trash-fill text-danger"></i>
 					</button>
 				</div>
 			</div>
 		</div>
-		<div class="inner" v-else>
+		<div class="inner text-white" v-else>
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 			<div class="row my-2">
 				<label for="requirements" class="col-3 form-label"
@@ -230,7 +230,7 @@ contract = ref(contract.contract);
 	color: var(--black-color);
 
 	.inner {
-		background-color: white;
+		background-color: #758694;
 		padding: 30px;
 		border-radius: 12px;
 		display: flex;
@@ -256,12 +256,16 @@ contract = ref(contract.contract);
 		}
 
 		.link:hover {
-			color: darkcyan;
+			color: #9cdba6;
 			cursor: pointer;
 		}
 
 		.btn-green {
 			background-color: #468585;
+		}
+
+		.text-green {
+			color: #9cdba6;
 		}
 	}
 }

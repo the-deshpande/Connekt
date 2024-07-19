@@ -38,7 +38,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-	const publicPages = ["/login"];
+	const publicPages = ["/login", "/"];
 	const authRequired = !publicPages.includes(to.path);
 
 	if (authRequired && !store.getters.isLoggedIn) {

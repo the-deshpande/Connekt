@@ -68,10 +68,10 @@ async function deleteUser(user_id) {
 
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
-		<div class="inner">
-			<h2>User Details</h2>
+		<div class="inner text-white">
+			<h2 class="text-green">User Details</h2>
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 			<div class="row">
 				<div>
@@ -120,11 +120,11 @@ async function deleteUser(user_id) {
 			<div class="row" v-if="store.state.user.type == 0">
 				<button class="btn col" @click="flagUser(user.id)">
 					<i
-						class="bi bi-flag-fill"
+						class="bi fs-4 bi-flag-fill"
 						:class="{ 'text-danger': user.flagged }"></i>
 				</button>
 				<button class="btn col" @click="deleteUser(user.id)">
-					<i class="bi bi-trash text-danger"></i>
+					<i class="bi fs-4 bi-trash text-danger"></i>
 				</button>
 			</div>
 			<div class="row" v-if="store.state.user.type == 2">
@@ -157,7 +157,7 @@ async function deleteUser(user_id) {
 	color: var(--black-color);
 
 	.inner {
-		background-color: white;
+		background-color: #758694;
 		padding: 30px;
 		border-radius: 12px;
 		display: flex;
@@ -183,6 +183,10 @@ async function deleteUser(user_id) {
 		}
 		.btn-green {
 			background-color: #468585;
+		}
+
+		.text-green {
+			color: #9cdba6;
 		}
 	}
 }

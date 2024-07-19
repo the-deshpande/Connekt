@@ -10,28 +10,21 @@ let modalActive = ref(false);
 <template>
 	<header
 		class="d-flex text-white flex-wrap justify-content-center py-3 mb-4 border-bottom">
-		<a
-			href="/"
-			class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none px-3">
-			<img alt="Connekt Logo" class="filter-green" src="../assets/logo.svg" />
-			<span class="fs-3 px-3 text-green">Connekt</span>
-		</a>
+		<router-link to="/" custom v-slot="{ href, navigate }">
+			<button
+				:href="href"
+				@click="navigate"
+				class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none px-3 nav-link">
+				<img alt="Connekt Logo" class="filter-green" src="../assets/logo.svg" />
+				<span class="fs-3 px-3 text-green">Connekt</span>
+			</button>
+		</router-link>
 
 		<ul class="nav nav-pills">
-			<li class="nav-item mx-1">
-				<router-link to="/" custom v-slot="{ href, navigate, isActive }">
-					<button
-						:class="{ active: isActive }"
-						:href="href"
-						@click="navigate"
-						class="nav-link text-white">
-						Home
-					</button>
-				</router-link>
-			</li>
 			<li
 				class="nav-item mx-1"
 				v-if="
+					store.getters.isLoggedIn &&
 					store.state.user &&
 					(store.state.user.type == 0 || store.state.user.type == 2)
 				">
@@ -45,7 +38,7 @@ let modalActive = ref(false);
 					</button>
 				</router-link>
 			</li>
-			<li class="nav-item mx-1">
+			<li class="nav-item mx-1" v-if="store.getters.isLoggedIn">
 				<router-link
 					to="/campaigns"
 					custom
@@ -59,7 +52,7 @@ let modalActive = ref(false);
 					</button>
 				</router-link>
 			</li>
-			<li class="nav-item mx-1">
+			<li class="nav-item mx-1" v-if="store.getters.isLoggedIn">
 				<router-link
 					to="/contracts"
 					custom

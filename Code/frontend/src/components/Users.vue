@@ -27,7 +27,9 @@ const users = response.data.users;
 				class="list-group-item text-white list-group-item-action bg-gray"
 				@click="openModal(user)">
 				<div class="d-flex w-100 justify-content-between">
-					<h5 class="mb-1">{{ user.first_name }} {{ user.last_name }}</h5>
+					<h5 class="mb-1 text-green">
+						{{ user.first_name }} {{ user.last_name }}
+					</h5>
 					<small
 						><i
 							class="bi bi-flag-fill fs-3"
@@ -54,6 +56,9 @@ div button.bg-gray {
 	background-color: #758694;
 }
 div button.bg-gray:hover {
-	background-color: #405d72;
+	background-color: #468585;
+}
+.text-green {
+	color: #9cdba6;
 }
 </style>

@@ -54,9 +54,10 @@ async function deleteUser() {
 
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
-		<div class="inner" v-if="!editMode">
+		<div class="inner text-white" v-if="!editMode">
+			<h2 class="text-green">Profile</h2>
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 
 			<div class="row">
@@ -104,19 +105,19 @@ async function deleteUser() {
 			</div>
 			<div class="row">
 				<button class="btn col" @click="store.commit('logout')">
-					<i class="bi bi-box-arrow-left text-success"></i>
+					<i class="bi fs-4 bi-box-arrow-left text-success"></i>
 				</button>
 				<button class="btn col" @click="editMode = true">
-					<i class="bi bi-pencil text-warning"></i>
+					<i class="bi fs-4 bi-pencil text-warning"></i>
 				</button>
 				<button class="btn col" @click="deleteUser()">
-					<i class="bi bi-trash text-danger"></i>
+					<i class="bi fs-4 bi-trash text-danger"></i>
 				</button>
 			</div>
 		</div>
-		<div class="inner" v-else>
+		<div class="inner text-white" v-else>
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 			<div class="row my-2">
 				<label for="first-name" class="col-3 form-label">First Name: </label>
@@ -223,7 +224,7 @@ async function deleteUser() {
 	color: var(--black-color);
 
 	.inner {
-		background-color: white;
+		background-color: #758694;
 		padding: 30px;
 		border-radius: 12px;
 		display: flex;
@@ -250,6 +251,10 @@ async function deleteUser() {
 
 		.btn-green {
 			background-color: #468585;
+		}
+
+		.text-green {
+			color: #9cdba6;
 		}
 	}
 }

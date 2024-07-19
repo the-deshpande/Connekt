@@ -44,7 +44,7 @@ const contracts = response.data.contracts;
 				class="list-group-item text-white list-group-item-action bg-gray"
 				@click="openModal(contract)">
 				<div class="d-flex w-100 justify-content-between">
-					<h5 class="mb-1">{{ contract.requirements }}</h5>
+					<h5 class="mb-1 text-green">{{ contract.requirements }}</h5>
 					<small>
 						<i
 							class="bi bi-ban text-danger fs-3"
@@ -86,9 +86,12 @@ div button.bg-gray {
 	background-color: #758694;
 }
 div button.bg-gray:hover {
-	background-color: #405d72;
+	background-color: #468585;
 }
 .btn-green {
 	background-color: #468585;
+}
+.text-green {
+	color: #9cdba6;
 }
 </style>

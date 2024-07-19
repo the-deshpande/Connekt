@@ -108,16 +108,16 @@ async function addContract() {
 
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
-		<div class="inner" v-if="item.item == 0">
+		<div class="inner text-white" v-if="item.item == 0">
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 			<div class="row my-2 mt-4">
 				<label for="name" class="col-3 form-label">Name: </label>
 				<input
 					type="text"
 					id="name"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="entry.name" />
 			</div>
 
@@ -126,7 +126,7 @@ async function addContract() {
 				<input
 					type="text"
 					id="description"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="entry.description" />
 			</div>
 
@@ -135,7 +135,7 @@ async function addContract() {
 				<button
 					type="checkbox"
 					id="public"
-					class="col btn"
+					class="col btn text-white"
 					:class="[entry.public ? 'btn-outline-success' : 'btn-outline-danger']"
 					@click="entry.public = !entry.public">
 					{{ entry.public ? "Public" : "Private" }}
@@ -147,7 +147,7 @@ async function addContract() {
 				<input
 					type="date"
 					id="start-date"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="entry.start_date" />
 			</div>
 
@@ -156,7 +156,7 @@ async function addContract() {
 				<input
 					type="date"
 					id="end-date"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="entry.end_date" />
 			</div>
 
@@ -165,7 +165,7 @@ async function addContract() {
 				<input
 					type="number"
 					id="goals"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="entry.goals" />
 			</div>
 
@@ -177,9 +177,9 @@ async function addContract() {
 				<div class="col"></div>
 			</div>
 		</div>
-		<div class="inner" v-else-if="item.item == 1">
+		<div class="inner text-white" v-else-if="item.item == 1">
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 			<div class="row my-2 mt-4">
 				<label for="requirements" class="col-3 form-label"
@@ -188,7 +188,7 @@ async function addContract() {
 				<input
 					type="text"
 					id="requirements"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="entry.requirements" />
 			</div>
 
@@ -199,14 +199,14 @@ async function addContract() {
 				<input
 					type="number"
 					id="payment-amount"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="entry.payment_amount" />
 			</div>
 
 			<div class="row my-2">
 				<label for="campaigns" class="col-3 form-label">Campaign: </label>
 				<select
-					class="col form-select"
+					class="col form-select input-grey text-white"
 					id="campaigns"
 					v-model="entry.campaign_id">
 					<option v-for="campaign in campaigns" :value="campaign.id">
@@ -218,7 +218,7 @@ async function addContract() {
 			<div class="row my-2" v-if="!store.state.user.influencer">
 				<label for="influencer" class="col-3 form-label">Influencer: </label>
 				<select
-					class="col form-select"
+					class="col form-select input-grey text-white"
 					id="influencer"
 					v-model="entry.influencer_id">
 					<option
@@ -254,7 +254,7 @@ async function addContract() {
 	color: var(--black-color);
 
 	.inner {
-		background-color: white;
+		background-color: #758694;
 		padding: 30px;
 		border-radius: 12px;
 		display: flex;
@@ -281,6 +281,14 @@ async function addContract() {
 
 		.btn-green {
 			background-color: #468585;
+		}
+
+		.text-green {
+			color: #9cdba6;
+		}
+
+		.input-grey {
+			background-color: #758694;
 		}
 	}
 }

@@ -111,10 +111,10 @@ campaign = ref(campaign.campaign);
 
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
-		<div class="inner" v-if="!editMode">
-			<h2>Campaign Modal</h2>
+		<div class="inner text-white" v-if="!editMode">
+			<h2 class="text-green">Campaign Modal</h2>
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 			<div class="row">
 				<div>
@@ -148,14 +148,14 @@ campaign = ref(campaign.campaign);
 						@click="flagCampaign(campaign.id)"
 						class="btn col"
 						v-if="store.state.user.type == 0 && !campaign.approved">
-						<h2><i class="bi bi-check-lg text-success"></i></h2>
+						<h2><i class="bi fs-4 bi-check-lg text-success"></i></h2>
 					</button>
 					<button
 						@click="flagCampaign(campaign.id)"
 						class="btn col"
 						v-else-if="store.state.user.type == 0 && campaign.approved">
 						<i
-							class="bi bi-flag-fill"
+							class="bi fs-4 bi-flag-fill"
 							:class="{ 'text-danger': campaign.flagged }"></i>
 					</button>
 
@@ -166,14 +166,14 @@ campaign = ref(campaign.campaign);
 							store.state.user.type == 0 ||
 							campaign.sponsor.id == store.state.user.id
 						">
-						<i class="bi bi-pencil text-warning"></i>
+						<i class="bi fs-4 bi-pencil text-warning"></i>
 					</button>
 
 					<button
 						class="btn col"
 						v-if="!store.state.user.influencer"
 						@click="deleteCampaign(campaign.id)">
-						<i class="bi bi-trash-fill text-danger"></i>
+						<i class="bi fs-4 bi-trash-fill text-danger"></i>
 					</button>
 				</div>
 				<div
@@ -194,9 +194,9 @@ campaign = ref(campaign.campaign);
 				</div>
 			</div>
 		</div>
-		<div class="inner" v-else>
+		<div class="inner text-white" v-else>
 			<button class="close-btn" @click="$emit('closePopup')">
-				<i class="bi bi-x-lg"></i>
+				<i class="bi bi-x-lg text-white"></i>
 			</button>
 			<div class="row my-2">
 				<label for="name" class="col-3 form-label">Name: </label>
@@ -290,7 +290,7 @@ campaign = ref(campaign.campaign);
 	color: var(--black-color);
 
 	.inner {
-		background-color: white;
+		background-color: #758694;
 		padding: 30px;
 		border-radius: 12px;
 		display: flex;
@@ -316,12 +316,16 @@ campaign = ref(campaign.campaign);
 		}
 
 		.user:hover {
-			color: darkcyan;
+			color: #9cdba6;
 			cursor: pointer;
 		}
 
 		.btn-green {
 			background-color: #468585;
+		}
+
+		.text-green {
+			color: #9cdba6;
 		}
 	}
 }
