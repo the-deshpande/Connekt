@@ -12,6 +12,7 @@ let registerDetails = reactive({
 	first_name: "",
 	last_name: "",
 	password: "",
+	cnfPassword: "",
 	email: "",
 	type: 0,
 });
@@ -29,6 +30,7 @@ let sponsorRegister = reactive({
 });
 
 async function registerHandler() {
+	var re = /\S+@\S+\.\S+/;
 	if (
 		registerDetails.email == "" ||
 		registerDetails.password == "" ||
@@ -37,6 +39,14 @@ async function registerHandler() {
 		registerDetails.type == 0
 	) {
 		alert("Kindly fill all fields");
+		return;
+	}
+	if (registerDetails.cnfPassword != registerDetails.password) {
+		alert("Passwords don't match!");
+		return;
+	}
+	if (!re.test(registerDetails.email)) {
+		alert("Enter correct Email ID");
 		return;
 	}
 
@@ -86,10 +96,10 @@ async function registerHandler() {
 	sponsorRegister.company = "";
 	sponsorRegister.budget = 0;
 
-	if (response.status == 200) {
+	if (response.status == 200 || response.status == 201) {
 		router.push("/");
 	} else {
-		alert(response.data.message);
+		alert(response);
 	}
 }
 
@@ -214,6 +224,18 @@ async function loginHandler() {
 									class="form-control"
 									type="password"
 									v-model="registerDetails.password" />
+							</div>
+						</div>
+
+						<div class="row my-4">
+							<div class="col-3">
+								<label class="form-label text-white fs-4">Confirm</label>
+							</div>
+							<div class="col-9">
+								<input
+									class="form-control"
+									type="password"
+									v-model="registerDetails.cnfPassword" />
 							</div>
 						</div>
 

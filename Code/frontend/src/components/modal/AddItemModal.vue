@@ -91,7 +91,6 @@ async function addContract() {
 	}
 
 	const path = "http://127.0.0.1:5000/contract";
-	console.log(path);
 	var response = await axios
 		.post(path, this.entry, {
 			headers: {

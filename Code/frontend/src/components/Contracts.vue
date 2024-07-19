@@ -55,7 +55,8 @@ const contracts = response.data.contracts;
 						<i
 							class="bi bi-send text-info fs-3"
 							v-else-if="
-								store.state.user.influencer && contract.status == 1
+								(store.state.user.influencer && contract.status == 1) ||
+								(store.state.user.sponsor && contract.status == 2)
 							"></i>
 						<i class="bi bi-clock text-info fs-3" v-else></i>
 					</small>

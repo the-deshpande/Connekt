@@ -92,7 +92,7 @@ async function editCampaign() {
 			},
 		})
 		.then((response) => {
-			this.campaign.approved = false;
+			if (store.state.user.type != 0) this.campaign.approved = false;
 			return response;
 		})
 		.catch((response) => {
@@ -176,12 +176,18 @@ campaign = ref(campaign.campaign);
 						<i class="bi bi-trash-fill text-danger"></i>
 					</button>
 				</div>
-				<div class="row" v-if="store.state.user.type == 2">
+				<div
+					class="row mt-3"
+					v-if="store.state.user.type == 2 || store.state.user.type == 1">
 					<div class="col"></div>
 					<button
 						@click="createContract()"
 						class="btn btn-green text-white col"
-						:disabled="!campaign.approved || campaign.flagged">
+						:disabled="
+							!campaign.approved ||
+							campaign.flagged ||
+							(store.state.user.type == 1 && !campaign.public)
+						">
 						Create Contract
 					</button>
 					<div class="col"></div>
