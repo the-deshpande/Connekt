@@ -1,6 +1,5 @@
 <script setup>
 import store from "@/store";
-import axios from "axios";
 import { ref, reactive } from "vue";
 import ModalWindow from "./modal/CampaignModal.vue";
 import AddItemModal from "./modal/AddItemModal.vue";

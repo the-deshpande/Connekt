@@ -58,7 +58,7 @@ const store = createStore({
 
 		async getUserData({ commit }, access_token) {
 			if (access_token == null) return "Not Logged In!";
-			const path = "http://127.0.0.1:5000/get-user-data";
+			const path = "http://127.0.0.1:5000/users/";
 			return axios
 				.get(path, {
 					headers: {
@@ -76,7 +76,7 @@ const store = createStore({
 
 		async getUsersList({ commit }, access_token) {
 			if (access_token == null) return "Not Logged In!";
-			const path = "http://127.0.0.1:5000/all-users";
+			const path = "http://127.0.0.1:5000/users/users";
 			return axios
 				.get(path, {
 					headers: {
@@ -92,7 +92,7 @@ const store = createStore({
 		},
 
 		async getCampaignsList({ commit }, access_token) {
-			const path = "http://127.0.0.1:5000/campaigns";
+			const path = "http://127.0.0.1:5000/campaigns/";
 			return axios
 				.get(path, {
 					headers: {
@@ -108,7 +108,7 @@ const store = createStore({
 		},
 
 		async getContractList({ commit }, access_token) {
-			const path = "http://127.0.0.1:5000/contract";
+			const path = "http://127.0.0.1:5000/contracts/";
 			return axios
 				.get(path, {
 					headers: {

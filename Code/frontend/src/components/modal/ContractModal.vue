@@ -21,7 +21,7 @@ function openCampaignModal(details) {
 
 async function deleteContract(contract_id) {
 	if (confirm("Are you sure?")) {
-		const path = "http://127.0.0.1:5000/contract";
+		const path = "http://127.0.0.1:5000/contracts/delete";
 		var response = await axios
 			.delete(path, {
 				headers: {
@@ -49,7 +49,7 @@ async function updateContract() {
 		alert("Please enter all details correctly!");
 		return;
 	}
-	const path = "http://127.0.0.1:5000/contract";
+	const path = "http://127.0.0.1:5000/contracts/edit";
 	var response = await axios
 		.put(path, this.contract, {
 			headers: {
@@ -74,7 +74,7 @@ async function updateStatus(approved) {
 	if (approved) this.contract.status = 3;
 	else this.contract.status = 0;
 
-	const path = "http://127.0.0.1:5000/contract";
+	const path = "http://127.0.0.1:5000/edit";
 	var response = await axios
 		.put(path, this.contract, {
 			headers: {

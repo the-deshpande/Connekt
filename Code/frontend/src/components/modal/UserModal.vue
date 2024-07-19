@@ -18,7 +18,7 @@ function createContract() {
 }
 
 async function flagUser(user_id) {
-	const path = "http://127.0.0.1:5000/all-users";
+	const path = "http://127.0.0.1:5000/users/flag";
 	var response = await axios
 		.post(
 			path,
@@ -43,7 +43,7 @@ async function flagUser(user_id) {
 
 async function deleteUser(user_id) {
 	if (confirm("Are you sure?")) {
-		const path = "http://127.0.0.1:5000/all-users";
+		const path = "http://127.0.0.1:5000/users/delete";
 		var response = await axios
 			.delete(path, {
 				headers: {

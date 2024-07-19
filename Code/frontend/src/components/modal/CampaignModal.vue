@@ -21,7 +21,7 @@ function createContract() {
 }
 
 async function flagCampaign(campaign_id) {
-	const path = "http://127.0.0.1:5000/campaigns";
+	const path = "http://127.0.0.1:5000/campaigns/create";
 	var response = await axios
 		.post(
 			path,
@@ -49,7 +49,7 @@ async function flagCampaign(campaign_id) {
 
 async function deleteCampaign(campaign_id) {
 	if (confirm("Are you sure?")) {
-		const path = "http://127.0.0.1:5000/campaigns";
+		const path = "http://127.0.0.1:5000/campaigns/delete";
 		var response = await axios
 			.delete(path, {
 				headers: {
@@ -84,7 +84,7 @@ async function editCampaign() {
 		alert("Please enter the data correctly");
 		return;
 	}
-	const path = "http://127.0.0.1:5000/campaigns";
+	const path = "http://127.0.0.1:5000/campaigns/edit";
 	var response = await axios
 		.put(path, this.campaign, {
 			headers: {

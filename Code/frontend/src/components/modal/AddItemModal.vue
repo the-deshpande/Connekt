@@ -61,7 +61,7 @@ async function addCampaign() {
 		return;
 	}
 
-	const path = "http://127.0.0.1:5000/campaigns";
+	const path = "http://127.0.0.1:5000/campaigns/create";
 	var response = await axios
 		.post(path, this.entry, {
 			headers: {
@@ -90,7 +90,7 @@ async function addContract() {
 		return;
 	}
 
-	const path = "http://127.0.0.1:5000/contract";
+	const path = "http://127.0.0.1:5000/contracts/create";
 	var response = await axios
 		.post(path, this.entry, {
 			headers: {

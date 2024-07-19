@@ -34,7 +34,7 @@ import store from "@/store";
 						{{ store.state.user.last_name }},</span
 					>
 				</h2>
-				<p>Welcome to the grand possibilities!</p>
+				<p>Welcome to the world of grand possibilities!</p>
 			</div>
 			<div class="col-md">
 				<div

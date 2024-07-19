@@ -8,7 +8,7 @@ let editMode = ref(false);
 let user = reactive(store.state.user);
 
 async function updateProfile() {
-	const path = "http://127.0.0.1:5000/get-user-data";
+	const path = "http://127.0.0.1:5000/users/edit-user";
 	var response = await axios
 		.put(path, this.user, {
 			headers: {
@@ -29,7 +29,7 @@ async function updateProfile() {
 
 async function deleteUser() {
 	if (confirm("Are you sure?")) {
-		const path = "http://127.0.0.1:5000/get-user-data";
+		const path = "http://127.0.0.1:5000/users/delete-user";
 		var response = await axios
 			.delete(path, {
 				headers: {

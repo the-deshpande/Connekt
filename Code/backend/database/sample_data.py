@@ -1,8 +1,8 @@
-from schema import db, User, Influencer, Sponsor, Campaign, Contract
+from database.schema import db, User, Influencer, Sponsor, Campaign, Contract
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 
-def add_starter_data(admin_password):
+def init_db(admin_password):
     # Admin
     admin = User(first_name = 'Kaiwalya', last_name = 'Deshpande', email = "kd@gmail.com", password = generate_password_hash(admin_password, 'pbkdf2:sha256', 8), type = 0)
     db.session.add(admin)
