@@ -1,5 +1,6 @@
 from flask import Flask
 from tasks import make_celery
+from celery.schedules import crontab
 
 from database.sample_data import init_db
 from database.schema import db, User
@@ -30,6 +31,18 @@ app.config.from_mapping(
             broker_url="redis://localhost",
             result_backend="redis://localhost",
             task_ignore_result=True,
+            beat_schedule={
+                "daily-reminder":{
+                    'task':"tasks.daily_reminder",
+                    'schedule': crontab(minute=0, hour=9),
+                    'relative': True,
+                },
+                'monthly-reminder':{
+                    'task':'tasks.monthly_reminder',
+                    'schedule': crontab(minute=0, hour=0, day_of_month=1),
+                    'relative': True,
+                }
+            }
         ),
     )
 

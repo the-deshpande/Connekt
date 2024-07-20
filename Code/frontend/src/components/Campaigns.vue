@@ -3,6 +3,7 @@ import store from "@/store";
 import { ref, reactive } from "vue";
 import ModalWindow from "./modal/CampaignModal.vue";
 import AddItemModal from "./modal/AddItemModal.vue";
+import axios from "axios";
 
 let modalActive = ref(false);
 let detail = reactive({});
@@ -21,15 +22,39 @@ const response = await store.dispatch(
 	"getCampaignsList",
 	store.state.accessToken
 );
+
+async function exportToCSV() {
+	const path = "http://127.0.0.1:5000/tasks/export";
+	var response = await axios
+		.get(path, {
+			headers: {
+				Authorization: `Bearer ${store.state.accessToken}`,
+			},
+		})
+		.then((response) => response)
+		.catch((response) => response.response);
+
+	if (response.status == 200) {
+		alert("The file will be shared on your mail");
+	}
+	console.log(response);
+}
+
 const campaigns = response.data.campaigns;
 </script>
 
 <template>
-	<div class="container mb-5" v-if="store.state.user.type == 2">
+	<div class="container mb-5">
 		<div class="row">
 			<div class="col-5"></div>
-			<button class="col btn btn-green text-white" @click="createCampaign()">
+			<button
+				class="col btn btn-green text-white"
+				v-if="store.state.user.type == 2"
+				@click="createCampaign()">
 				Add Campaign
+			</button>
+			<button class="col btn btn-green text-white" @click="exportToCSV()">
+				Export to CSV
 			</button>
 			<div class="col-5"></div>
 		</div>

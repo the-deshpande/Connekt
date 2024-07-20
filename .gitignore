@@ -36,3 +36,6 @@ __pychache__/*
 *.pyc
 
 celery_commands.txt
+celerybeat-schedule.bak
+celerybeat-schedule.dat
+celerybeat-schedule.dir
