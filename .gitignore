@@ -30,7 +30,9 @@ coverage
 *.tsbuildinfo
 .venv/*
 .env
-instance/*
+*.csv
 *.db
 __pychache__/*
 *.pyc
+
+celery_commands.txt
