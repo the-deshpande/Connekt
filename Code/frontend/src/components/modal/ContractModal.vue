@@ -74,7 +74,7 @@ async function updateStatus(approved) {
 	if (approved) this.contract.status = 3;
 	else this.contract.status = 0;
 
-	const path = "http://127.0.0.1:5000/edit";
+	const path = "http://127.0.0.1:5000/contracts/edit";
 	var response = await axios
 		.put(path, this.contract, {
 			headers: {

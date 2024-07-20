@@ -1,14 +1,60 @@
 <script setup>
 import store from "@/store";
+import axios from "axios";
+import { ref, reactive } from "vue";
+import ActiveUsers from "./charts/ActiveUsers.vue";
+import NichexIndustry from "./charts/NichexIndustry.vue";
+import ContractxPlatform from "./charts/ContractxPlatform.vue";
+import BudgetxIndustry from "./charts/BudgetxIndustry.vue";
+
+let pageNumber = ref(0);
+
+let stats;
+if (store.getters.isLoggedIn && store.state.user.type == 0) {
+	const path = "http://127.0.0.1:5000/tasks/dashboard";
+	var response = await axios
+		.get(path, {
+			headers: {
+				Authorization: `Bearer ${store.state.accessToken}`,
+			},
+		})
+		.then((response) => response)
+		.catch((response) => response.response);
+
+	console.log(response);
+	if (response.status == 200) stats = reactive(response.data);
+	else stats = reactive({ data: "No Data Collected" });
+}
 </script>
 <template>
 	<div
 		class="container text-white"
 		v-if="store.getters.isLoggedIn && store.state.user.type == 0">
-		Hi {{ store.state.user.first_name }}
+		<div class="row align-items-center main-body">
+			<div class="d-flex justify-content-center" style="height: 336px">
+				<button
+					:disabled="pageNumber <= 0"
+					@click="pageNumber--"
+					class="btn mx-5">
+					<i class="bi fs-4 bi-chevron-left text-white"></i>
+				</button>
+				<NichexIndustry v-if="pageNumber == 0" :data="stats.NichexIndustry" />
+				<ActiveUsers v-if="pageNumber == 1" :data="stats.ActiveUsers" />
+				<ContractxPlatform
+					v-if="pageNumber == 2"
+					:data="stats.ContractxPlatform" />
+				<BudgetxIndustry v-if="pageNumber == 3" :data="stats.BudgetxIndustry" />
+				<button
+					:disabled="pageNumber >= 3"
+					@click="pageNumber++"
+					class="btn mx-5">
+					<i class="bi fs-4 bi-chevron-right text-white"></i>
+				</button>
+			</div>
+		</div>
 	</div>
 	<div class="container text-white" v-else>
-		<div class="row align-items-center" style="min-height: 70vh">
+		<div class="row align-items-center main-body">
 			<div class="col-md" v-if="!store.getters.isLoggedIn">
 				<h1>Welcome to</h1>
 				<h1 class="text-green">Connekt!</h1>
@@ -96,11 +142,19 @@ import store from "@/store";
 </template>
 
 <style lang="scss" scoped>
+.main-body {
+	min-height: 70vh;
+}
+
 .active {
 	background-color: #468585;
 }
 
 .text-green {
 	color: #9cdba6;
+}
+
+.btn:hover {
+	background-color: rgba(255, 255, 255, 0.1);
 }
 </style>

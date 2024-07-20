@@ -45,10 +45,9 @@ const campaigns = response.data.campaigns;
 
 <template>
 	<div class="container">
-		<div class="text-center">
+		<div class="text-center" v-if="store.state.user.type == 2">
 			<button
 				class="btn btn-green btn-block text-white mx-3 mb-3"
-				v-if="store.state.user.type == 2"
 				@click="createCampaign()">
 				Add Campaign
 			</button>

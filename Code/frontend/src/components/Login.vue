@@ -384,6 +384,9 @@ async function loginHandler() {
 	border-width: 2px;
 }
 .btn-green {
-	background-color: #468585;
+	background-color: rgba(70, 133, 133, 1);
+}
+.btn-green:hover {
+	background-color: rgba(70, 133, 133, 0.8);
 }
 </style>

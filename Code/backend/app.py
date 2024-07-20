@@ -53,7 +53,7 @@ CORS(app, resources={r'/*':{'origins':'*'}})
 jwt = JWTManager(app)
 
 # Database
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{app.root_path}/instances/users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 db.init_app(app)
 with app.app_context():
     db.create_all()

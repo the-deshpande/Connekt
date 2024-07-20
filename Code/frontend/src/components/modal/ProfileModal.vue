@@ -170,11 +170,15 @@ async function deleteUser() {
 
 			<div class="row my-2" v-if="user.influencer">
 				<label for="platform" class="col-3 form-label">Platform: </label>
-				<input
-					type="text"
-					id="platform"
-					class="col form-control input-grey text-white"
-					v-model="user.influencer.platform" />
+				<select
+					class="col form-select input-grey text-white"
+					id="niche"
+					v-model="user.influencer.platform">
+					<option>Youtube</option>
+					<option>TikTok</option>
+					<option>Instagram</option>
+					<option>Twitter</option>
+				</select>
 			</div>
 
 			<div class="row my-2" v-if="user.influencer">
