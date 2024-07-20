@@ -44,22 +44,20 @@ const campaigns = response.data.campaigns;
 </script>
 
 <template>
-	<div class="container mb-5">
-		<div class="row">
-			<div class="col-5"></div>
+	<div class="container">
+		<div class="text-center">
 			<button
-				class="col btn btn-green text-white"
+				class="btn btn-green btn-block text-white mx-3 mb-3"
 				v-if="store.state.user.type == 2"
 				@click="createCampaign()">
 				Add Campaign
 			</button>
-			<button class="col btn btn-green text-white" @click="exportToCSV()">
+			<button
+				class="btn btn-green btn-block text-white mx-3 mb-3"
+				@click="exportToCSV()">
 				Export to CSV
 			</button>
-			<div class="col-5"></div>
 		</div>
-	</div>
-	<div class="container">
 		<div v-if="campaigns.length == 0" class="text-white fs-1 text-center">
 			Uh Oh! Seems like there are no campaigns.
 		</div>
@@ -94,6 +92,9 @@ const campaigns = response.data.campaigns;
 </template>
 
 <style lang="scss" scoped>
+.container {
+	min-height: 70vh;
+}
 div button.bg-gray {
 	background-color: #758694;
 }
@@ -101,7 +102,10 @@ div button.bg-gray:hover {
 	background-color: #468585;
 }
 .btn-green {
-	background-color: #468585;
+	background-color: rgba(70, 133, 133, 1);
+}
+.btn-green:hover {
+	background-color: rgba(70, 133, 133, 0.8);
 }
 .text-green {
 	color: #9cdba6;

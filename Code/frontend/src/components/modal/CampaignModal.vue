@@ -112,7 +112,7 @@ campaign = ref(campaign.campaign);
 <template>
 	<div class="modal-wrapper" aria-modal="true" role="dialog" tabindex="-1">
 		<div class="inner text-white" v-if="!editMode">
-			<h2 class="text-green">Campaign Modal</h2>
+			<h2 class="text-green">Campaign Details</h2>
 			<button class="close-btn" @click="$emit('closePopup')">
 				<i class="bi bi-x-lg text-white"></i>
 			</button>
@@ -203,7 +203,7 @@ campaign = ref(campaign.campaign);
 				<input
 					type="text"
 					id="name"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="campaign.name" />
 			</div>
 
@@ -212,7 +212,7 @@ campaign = ref(campaign.campaign);
 				<input
 					type="text"
 					id="description"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="campaign.description" />
 			</div>
 
@@ -221,7 +221,7 @@ campaign = ref(campaign.campaign);
 				<button
 					type="checkbox"
 					id="public"
-					class="col btn"
+					class="col btn input-grey text-white"
 					:class="[
 						campaign.public ? 'btn-outline-success' : 'btn-outline-danger',
 					]"
@@ -235,7 +235,7 @@ campaign = ref(campaign.campaign);
 				<input
 					type="date"
 					id="start-date"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="campaign.start_date" />
 			</div>
 
@@ -244,7 +244,7 @@ campaign = ref(campaign.campaign);
 				<input
 					type="date"
 					id="end-date"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="campaign.end_date" />
 			</div>
 
@@ -253,7 +253,7 @@ campaign = ref(campaign.campaign);
 				<input
 					type="number"
 					id="goals"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="campaign.goals" />
 			</div>
 
@@ -320,12 +320,21 @@ campaign = ref(campaign.campaign);
 			cursor: pointer;
 		}
 
+		.btn:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+		}
 		.btn-green {
-			background-color: #468585;
+			background-color: rgba(70, 133, 133, 0.8);
+		}
+		.btn-green:hover {
+			background-color: rgba(70, 133, 133, 1);
 		}
 
 		.text-green {
 			color: #9cdba6;
+		}
+		.input-grey {
+			background-color: #758694;
 		}
 	}
 }

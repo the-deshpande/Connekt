@@ -123,7 +123,7 @@ contract = ref(contract.contract);
 					<span class="fw-bold">Payment Amount: </span>
 					{{ contract.payment_amount }}
 				</div>
-				<div class="row">
+				<div class="row mt-3">
 					<button
 						@click="updateStatus(false)"
 						class="btn col"
@@ -182,7 +182,7 @@ contract = ref(contract.contract);
 				<input
 					type="text"
 					id="requirements"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="contract.requirements" />
 			</div>
 
@@ -193,7 +193,7 @@ contract = ref(contract.contract);
 				<input
 					type="number"
 					id="payment-amount"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="contract.payment_amount" />
 			</div>
 
@@ -260,12 +260,21 @@ contract = ref(contract.contract);
 			cursor: pointer;
 		}
 
+		.btn:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+		}
 		.btn-green {
-			background-color: #468585;
+			background-color: rgba(70, 133, 133, 0.8);
+		}
+		.btn-green:hover {
+			background-color: rgba(70, 133, 133, 1);
 		}
 
 		.text-green {
 			color: #9cdba6;
+		}
+		.input-grey {
+			background-color: #758694;
 		}
 	}
 }

@@ -103,7 +103,7 @@ async function deleteUser() {
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row mt-3">
 				<button class="btn col" @click="store.commit('logout')">
 					<i class="bi fs-4 bi-box-arrow-left text-success"></i>
 				</button>
@@ -124,7 +124,7 @@ async function deleteUser() {
 				<input
 					type="text"
 					id="first-name"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="user.first_name" />
 			</div>
 
@@ -133,14 +133,14 @@ async function deleteUser() {
 				<input
 					type="text"
 					id="last-name"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="user.last_name" />
 			</div>
 
 			<div class="row my-2" v-if="user.sponsor">
 				<label for="industry" class="col-3 form-label">Industry: </label>
 				<select
-					class="col form-select"
+					class="col form-select input-grey text-white"
 					id="industry"
 					v-model="user.sponsor.industry">
 					<option>Healthcare</option>
@@ -155,7 +155,7 @@ async function deleteUser() {
 				<input
 					type="text"
 					id="company"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="user.sponsor.company" />
 			</div>
 
@@ -164,7 +164,7 @@ async function deleteUser() {
 				<input
 					type="number"
 					id="budget"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="user.sponsor.budget" />
 			</div>
 
@@ -173,14 +173,14 @@ async function deleteUser() {
 				<input
 					type="text"
 					id="platform"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="user.influencer.platform" />
 			</div>
 
 			<div class="row my-2" v-if="user.influencer">
 				<label for="niche" class="col-3 form-label">Niche: </label>
 				<select
-					class="col form-select"
+					class="col form-select input-grey text-white"
 					id="niche"
 					v-model="user.influencer.niche">
 					<option>Healthcare</option>
@@ -195,7 +195,7 @@ async function deleteUser() {
 				<input
 					type="number"
 					id="reach"
-					class="col form-control"
+					class="col form-control input-grey text-white"
 					v-model="user.influencer.reach" />
 			</div>
 
@@ -249,12 +249,21 @@ async function deleteUser() {
 			border-width: 0;
 		}
 
+		.btn:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+		}
 		.btn-green {
-			background-color: #468585;
+			background-color: rgba(72, 133, 133, 0.8);
+		}
+		.btn-green:hover {
+			background-color: rgba(72, 133, 133, 1);
 		}
 
 		.text-green {
 			color: #9cdba6;
+		}
+		.input-grey {
+			background-color: #758694;
 		}
 	}
 }

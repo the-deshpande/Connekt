@@ -14,13 +14,13 @@ let modalActive = ref(false);
 			<button
 				:href="href"
 				@click="navigate"
-				class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none px-3 nav-link">
+				class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none px-3 nav-link btn">
 				<img alt="Connekt Logo" class="filter-green" src="../assets/logo.svg" />
-				<span class="fs-3 px-3 text-green">Connekt</span>
+				<span class="fs-3 px-3 text-green bg-clear">Connekt</span>
 			</button>
 		</router-link>
 
-		<ul class="nav nav-pills">
+		<ul class="nav nav-pills text-center">
 			<li
 				class="nav-item mx-1"
 				v-if="
@@ -92,10 +92,15 @@ let modalActive = ref(false);
 </template>
 
 <style lang="scss" scoped>
-.nav-link.active {
-	background-color: #468585;
+.nav-link:hover {
+	background-color: rgba(0, 0, 0, 0.2);
 }
-
+.nav-link.active {
+	background-color: rgba(70, 133, 133, 1);
+}
+.nav-link.active:hover {
+	background-color: rgba(70, 133, 133, 0.8);
+}
 .text-green {
 	color: #9cdba6;
 }

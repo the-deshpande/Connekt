@@ -376,6 +376,9 @@ async function loginHandler() {
 </template>
 
 <style lang="scss" scoped>
+.container {
+	min-height: 70vh;
+}
 .page-link.active {
 	border-color: #9cdba6;
 	border-width: 2px;

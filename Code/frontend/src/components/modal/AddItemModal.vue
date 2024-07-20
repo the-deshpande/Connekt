@@ -280,7 +280,10 @@ async function addContract() {
 		}
 
 		.btn-green {
-			background-color: #468585;
+			background-color: rgba(70, 133, 133, 0.8);
+		}
+		.btn-green:hover {
+			background-color: rgba(70, 133, 133, 1);
 		}
 
 		.text-green {

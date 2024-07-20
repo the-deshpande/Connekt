@@ -51,6 +51,9 @@ const users = response.data.users;
 </template>
 
 <style lang="scss" scoped>
+.container {
+	min-height: 70vh;
+}
 div button.bg-gray {
 	background-color: #758694;
 }
