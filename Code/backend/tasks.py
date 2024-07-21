@@ -27,7 +27,7 @@ def make_celery(app: Flask) -> Celery:
 
 def send_mail(attachment, message):
     if attachment:
-        with open(f"./instances/{attachment}", "rb") as f:
+        with open(f"./instance/{attachment}", "rb") as f:
             file = MIMEApplication(
                     f.read(),
                     Name=attachment,
@@ -52,7 +52,7 @@ def async_export(email):
         campaigns[i]['sponsor'] = campaigns[i]['sponsor']['email']
     df = pd.DataFrame(campaigns)
     attachment = "campaigns.csv"
-    df.to_csv(f"./instances/{attachment}")
+    df.to_csv(f"./instance/{attachment}")
 
     message = MIMEMultipart()
     message['From'] = env.get('SMTP_EMAIL')
